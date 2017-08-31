@@ -8,12 +8,8 @@ sources.push("http://68.media.tumblr.com/f2dd914736f5fda3746dbb9932e241db/tumblr
 
 var Elements = []
 
-function Sprite(x, y, width, height, src) {
-    this.X = x;
-    this.Y = y;
+function Sprite(src) {
     this.image = new Image();
-    this.image.width = width;
-    this.image.height = height;
     this.image.src = src;
 }
 
@@ -28,13 +24,17 @@ function Element(x, y, z, name, static, sprite){
     this.Z = z
 }
 
-var picture = new Sprite(20, 20, 200, 200, sources[0]);
-var eye = new Element(0, 0, 0, 'eye', false, picture)
+var picture = new Sprite(sources[0]);
+var eye = new Element(0, 0, 0, 'eye1', false, picture)
 Elements.push(eye)
 
-var picture = new Sprite(20, 20, 200, 200, sources[1]);
-var card = new Element(0, 0, 0, 'eye', false, picture)
+var picture = new Sprite(sources[1]);
+var card = new Element(300, 0, 0, 'card', false, picture)
 Elements.push(card)
+
+var picture = new Sprite(sources[1]);
+var static_card = new Element(600, 0, 0, 'static_card', true, picture)
+Elements.push(static_card)
 
 mouseDownToggle = false
 mouseUpToggle = false
@@ -127,6 +127,9 @@ function dragHandler(){
     this.mouseDown = function() {
         for (var iter = 0; iter < Elements.length; iter++) {
             if (checkMouseOn(Elements[iter], mousePosition.X, mousePosition.Y)) {
+                if (Elements[iter].static){
+                    continue
+                }
                 this.drag_element = Elements[iter]
 
                 this.offsetX = mousePosition.X - this.drag_element.X
