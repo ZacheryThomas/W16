@@ -3,41 +3,43 @@ context = canvas.getContext('2d');
 
 
 var sources = new Array();
-sources.push("https://www.zacherythomas.com/images/eyes.jpg");
-sources.push("http://68.media.tumblr.com/ef7eb04a5774fbdb183d93e4a91d9fa5/tumblr_ovfijeR9Dy1uojm1ao9_1280.jpg");
-sources.push("http://68.media.tumblr.com/f2dd914736f5fda3746dbb9932e241db/tumblr_ovfijeR9Dy1uojm1ao1_250.jpg");
+sources.push("http://i.imgur.com/IztPI0x.jpg");
+sources.push("http://i.imgur.com/hZt6pAX.jpg");
+sources.push("http://i.imgur.com/zV3vhYN.jpg");
+sources.push("http://i.imgur.com/W9rH7rc.jpg");
+sources.push("http://i.imgur.com/czjRYl6.jpg");
+sources.push("http://i.imgur.com/ggo09ED.jpg");
+sources.push("http://i.imgur.com/IA4R4AY.jpg");
+sources.push("http://i.imgur.com/gTZJnUU.jpg");
+sources.push("http://i.imgur.com/TxGfNWT.jpg");
+sources.push("http://i.imgur.com/zRCIRkL.jpg");
+sources.push("http://i.imgur.com/HaX7Rxu.jpg");
+sources.push("http://i.imgur.com/6vTDzZ2.jpg");
+sources.push("http://i.imgur.com/fiRQpEF.jpg");
 
 var Elements = []
 var highlightSelected = true;
+
+//Sprite height and width
+var height = 165;
+var width = 255;
 
 function Sprite(src) {
     this.image = new Image();
     this.image.src = src;
 }
 
-function Element(x, y, z, name, static, sprite, active){
+function Element(x, y, z, name, static, sprite, active, width, height){
     this.name = name
     this.static = static
     this.sprite = sprite
-    this.width = 200
-    this.height = 200
+    this.width = width
+    this.height = height
     this.X = x
     this.Y = y
     this.Z = z
     this.active = active
 }
-
-var picture = new Sprite(sources[0]);
-var eye = new Element(0, 0, 0, {suite: 1, value: 1}, false, picture, true)
-Elements.push(eye)
-
-var picture = new Sprite(sources[1]);
-var card = new Element(300, 0, 0, {suite: 1, value: 2}, false, picture, true)
-Elements.push(card)
-
-var picture = new Sprite(sources[2]);
-var static_card = new Element(600, 0, 0, {suite: 1, value: 3}, true, picture, true)
-Elements.push(static_card)
 
 mouseDownToggle = false
 mouseUpToggle = false
@@ -56,8 +58,8 @@ function mouseHandler(){
 
     function handleMouseMove(e){
         mouseMoveToggle = true
-        mousePosition.X = e.clientX
-        mousePosition.Y = e.clientY
+        mousePosition.X = e.offsetX
+        mousePosition.Y = e.offsetY
     }
 
     function handleEndDragging(e){
@@ -72,7 +74,8 @@ function checkOverlap(){
             if (obj1 === obj2){
                 continue
             }
-
+            if (!obj1.active || !obj2.active)
+                continue;
             // Enure that leftmost edge of pic1 is less than the furthest right edge of pic2
             // and rightmost edge of pic one is less than the furthest edge of pic2
             // same with height
@@ -131,9 +134,18 @@ function dragHandler(){
         for (var iter = 0; iter < Elements.length; iter++) {
             if (checkMouseOn(Elements[iter], mousePosition.X, mousePosition.Y)) {
                 if (Elements[iter].static){
-                    continue
+                    Elements.push(new Element(Elements[iter].X, 
+                        Elements[iter].Y, 
+                        Elements[iter].Z, 
+                        Elements[iter].name, 
+                        false, 
+                        Elements[iter].sprite, 
+                        true, 
+                        height, 
+                        width));
                 }
                 this.drag_element = Elements[iter]
+                let rect = canvas.getBoundingClientRect();
 
                 this.offsetX = mousePosition.X - this.drag_element.X
                 this.offsetY = mousePosition.Y - this.drag_element.Y
@@ -193,14 +205,14 @@ function draw() {
 
 }
 
-function game_loop() {
-    highlightSelected = false;
 
+function game_loop() {
     update();
     draw();
 }
 
-
+highlightSelected = false;
+Elements.push(new Element(10, 0, 0, {suite: 1, value: 1}, true, new Sprite(sources[0]), true, height, width));
 setInterval(game_loop, 30);
 
 /**
@@ -219,19 +231,63 @@ function handleCollisions(overlaps){
         let card1 = collision[1].name;
         let newName = {suite: getNewSuite(card0.suite, card1.suite), value: 1 + (card0.value + card1.value-1) % 13};
 
-        let newCard = new Sprite(sources[(newName.suite-1)*14 + newName.value - 1]);
-        Elements.push(new Element(collision[1].X, collision[1].Y, collision[1].Z, newName, false, newCard, true));
+        let newCard = new Sprite(sources[(newName.suite-1)*13 + newName.value - 1]);
+        Elements.push(new Element(collision[1].X, collision[1].Y, collision[1].Z, newName, false, newCard, true, height, width));
         Elements.splice(Elements.indexOf(collision[1]), 1);
         Elements.splice(Elements.indexOf(collision[0]), 1);
+
+        addStaticCard(new Element(10, 0, 0, newName, true, newCard, true, height, width));
+        sortStaticCards();
     }
 
 }
 
+function addStaticCard(newCard) {
+    let cardExists = false;
+    for (let index = 0; index < Elements.length; index++)
+        if (newCard.name.suite == Elements[index].name.suite 
+            && Elements[index].static 
+            && newCard.name.value == Elements[index].name.value){
+                cardExists = true;
+            }
+    if (!cardExists)
+        Elements.push(newCard);
+}
+
+/**
+ * sorts the static cards in numerical value and repositions accordingly
+ */
+function sortStaticCards() {
+    let activeStaticElements = [];
+    for (let index = 0; index < Elements.length; index++)
+        if(Elements[index].active && Elements[index].static)
+            activeStaticElements.push({pageIndex: (Elements[index].name.suite-1)*13 + Elements[index].name.value - 1, elmtIndex: index})
+    activeStaticElements = sortStaticCardArray(activeStaticElements)
+    for (let index = 0; index < activeStaticElements.length; index++)
+        Elements[activeStaticElements[index].elmtIndex].Y = 260*index;
+}
+
+function sortStaticCardArray(arr){
+    var len = arr.length;
+    for (var i = len-1; i>=0; i--){
+      for(var j = 1; j<=i; j++){
+        if(arr[j-1].pageIndex>arr[j].pageIndex){
+            var temp = arr[j-1];
+            arr[j-1] = arr[j];
+            arr[j] = temp;
+         }
+      }
+    }
+    return arr;
+ }
+
 /**
  * Create the static Elements for the game implementation
  */
-function createStaticElements() {
-
+function createStaticCards() {
+    for (var iter = 0; iter < sources.length; iter++)
+        Elements.push(new Element(10, 260*iter, 0, {suite: 1 + parseInt((iter+1)/14), value: 1 + iter % 13}, true, new Sprite(sources[iter]), false, height, width));
+    Elements[0].active = true;
 }
 
 /**
@@ -240,6 +296,8 @@ function createStaticElements() {
  * hearts = 2
  * diamonds = 3
  * spades = 4 
+ * 
+ * *clubs only suite implemented. Others not yet implemented*
  */
 function getNewSuite(suite1, suite2) {
     if(suite1 == 1){
