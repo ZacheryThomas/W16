@@ -21,8 +21,8 @@ var Elements = []
 var highlightSelected = true;
 
 //Sprite height and width
-var height = 165;
-var width = 255;
+var global_sprite_width = 165;
+var global_sprite_height = 255;
 
 function Sprite(src) {
     this.image = new Image();
@@ -133,19 +133,7 @@ function dragHandler(){
     this.mouseDown = function() {
         for (var iter = 0; iter < Elements.length; iter++) {
             if (checkMouseOn(Elements[iter], mousePosition.X, mousePosition.Y)) {
-                if (Elements[iter].static){
-                    Elements.push(new Element(Elements[iter].X, 
-                        Elements[iter].Y, 
-                        Elements[iter].Z, 
-                        Elements[iter].name, 
-                        false, 
-                        Elements[iter].sprite, 
-                        true, 
-                        height, 
-                        width));
-                }
                 this.drag_element = Elements[iter]
-                let rect = canvas.getBoundingClientRect();
 
                 this.offsetX = mousePosition.X - this.drag_element.X
                 this.offsetY = mousePosition.Y - this.drag_element.Y
@@ -165,7 +153,6 @@ function update() {
 
     if (mouseUpToggle){
         if (overlaps.length > 0){
-            console.log(overlaps);
             handleCollisions(overlaps);
         }
         dHandler.mouseUp()
@@ -177,30 +164,52 @@ function update() {
     }
     if (mouseDownToggle){
         dHandler.mouseDown()
+
+        // if you end up trying to drag a card from 'deck' i.e. try to drag static card
+        // code generates identical, non-static card and sets that as currently dragged element
+        if (dHandler.drag_element.static){
+            newElement = new Element(dHandler.drag_element.X, 
+                dHandler.drag_element.Y, 
+                dHandler.drag_element.Z, 
+                dHandler.drag_element.name, 
+                false, 
+                dHandler.drag_element.sprite, 
+                true, 
+                global_sprite_width, 
+                global_sprite_height);
+            Elements.push(newElement);
+            dHandler.drag_element = newElement;
+        }
+        
         mouseDownToggle = false
     }
-
-    
-    
+  
 }
 
 function draw() {
     canvas.width = canvas.width;
+    
+    // draw each element
+    for (element of Elements) {
+        if(element.active)
+            context.drawImage(element.sprite.image, element.X, element.Y, element.width, element.height);
 
-    //draw outline around image w/ focus if desired
-    if (dHandler.drag_element && highlightSelected) {
-        context.beginPath();
-        context.lineWidth = "6";
-        context.strokeStyle = "red";
-        context.rect(dHandler.drag_element.X, dHandler.drag_element.Y, dHandler.drag_element.width, dHandler.drag_element.height);
-        context.stroke();
-        
     }
-        
-    for (var iter = 0; iter < Elements.length; iter++) {
-        if(Elements[iter].active)
-            context.drawImage(Elements[iter].sprite.image, Elements[iter].X, Elements[iter].Y, Elements[iter].width, Elements[iter].height);
 
+    // draw outline around image being dragged
+    if (dHandler.drag_element) {
+
+        // always redraws currently dragged card
+        context.drawImage(dHandler.drag_element.sprite.image, dHandler.drag_element.X, dHandler.drag_element.Y,
+            dHandler.drag_element.width, dHandler.drag_element.height);
+
+        if (highlightSelected) {
+            context.beginPath();
+            context.lineWidth = "3";
+            context.strokeStyle = "red";
+            context.rect(dHandler.drag_element.X, dHandler.drag_element.Y, dHandler.drag_element.width, dHandler.drag_element.height);
+            context.stroke();
+        }
     }
 
 }
@@ -211,8 +220,8 @@ function game_loop() {
     draw();
 }
 
-highlightSelected = false;
-Elements.push(new Element(10, 0, 0, {suite: 1, value: 1}, true, new Sprite(sources[0]), true, height, width));
+
+Elements.push(new Element(10, 0, 0, {suite: 1, value: 1}, true, new Sprite(sources[0]), true, global_sprite_width, global_sprite_height));
 setInterval(game_loop, 30);
 
 /**
@@ -229,19 +238,26 @@ function handleCollisions(overlaps){
     else {
         let card0 = collision[0].name;
         let card1 = collision[1].name;
-        let newName = {suite: getNewSuite(card0.suite, card1.suite), value: 1 + (card0.value + card1.value-1) % 13};
+        let newName = {suite: getNewSuite(card0.suite, card1.suite), value: 1 + (card0.value + card1.value - 1) % 13};
 
-        let newCard = new Sprite(sources[(newName.suite-1)*13 + newName.value - 1]);
-        Elements.push(new Element(collision[1].X, collision[1].Y, collision[1].Z, newName, false, newCard, true, height, width));
+        let newCardSprite = new Sprite(sources[(newName.suite-1) * 13 + newName.value - 1]);
+        Elements.push(new Element(collision[1].X, collision[1].Y, collision[1].Z, newName, false, newCardSprite, true, global_sprite_width, global_sprite_height));
+        
+        // remove elements from Elements array
         Elements.splice(Elements.indexOf(collision[1]), 1);
         Elements.splice(Elements.indexOf(collision[0]), 1);
 
-        addStaticCard(new Element(10, 0, 0, newName, true, newCard, true, height, width));
+        // attempts to generate info for static card
+        addStaticCard(new Element(10, 0, 0, newName, true, newCardSprite, true, global_sprite_width, global_sprite_height));
         sortStaticCards();
     }
 
 }
 
+/**
+ * Makes sure static card doesnt already exist and adds the new static card to Elements
+ * @param {*} newCard 
+ */
 function addStaticCard(newCard) {
     let cardExists = false;
     for (let index = 0; index < Elements.length; index++)
@@ -254,24 +270,29 @@ function addStaticCard(newCard) {
         Elements.push(newCard);
 }
 
+
 /**
  * sorts the static cards in numerical value and repositions accordingly
  */
 function sortStaticCards() {
+    padding = 5 // padding between cards in px
+
     let activeStaticElements = [];
     for (let index = 0; index < Elements.length; index++)
         if(Elements[index].active && Elements[index].static)
             activeStaticElements.push({pageIndex: (Elements[index].name.suite-1)*13 + Elements[index].name.value - 1, elmtIndex: index})
+    
     activeStaticElements = sortStaticCardArray(activeStaticElements)
     for (let index = 0; index < activeStaticElements.length; index++)
-        Elements[activeStaticElements[index].elmtIndex].Y = 260*index;
+        Elements[activeStaticElements[index].elmtIndex].Y = (global_sprite_height + padding) * index;
 }
+
 
 function sortStaticCardArray(arr){
     var len = arr.length;
-    for (var i = len-1; i>=0; i--){
-      for(var j = 1; j<=i; j++){
-        if(arr[j-1].pageIndex>arr[j].pageIndex){
+    for (var i = len-1; i >= 0; i--){
+      for(var j = 1; j <= i; j++){
+        if(arr[j-1].pageIndex > arr[j].pageIndex){
             var temp = arr[j-1];
             arr[j-1] = arr[j];
             arr[j] = temp;
@@ -281,14 +302,6 @@ function sortStaticCardArray(arr){
     return arr;
  }
 
-/**
- * Create the static Elements for the game implementation
- */
-function createStaticCards() {
-    for (var iter = 0; iter < sources.length; iter++)
-        Elements.push(new Element(10, 260*iter, 0, {suite: 1 + parseInt((iter+1)/14), value: 1 + iter % 13}, true, new Sprite(sources[iter]), false, height, width));
-    Elements[0].active = true;
-}
 
 /**
  * This is an extension of quaternians to i,j,k,l 
