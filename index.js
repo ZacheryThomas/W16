@@ -3,6 +3,7 @@ context = canvas.getContext('2d');
 
 
 var sources = new Array();
+//used with permission from the Artist: Merve Naz Yelmen
 sources.push("http://i.imgur.com/IztPI0x.jpg");
 sources.push("http://i.imgur.com/hZt6pAX.jpg");
 sources.push("http://i.imgur.com/zV3vhYN.jpg");
