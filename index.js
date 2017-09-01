@@ -4,16 +4,18 @@ context = canvas.getContext('2d');
 
 var sources = new Array();
 sources.push("https://www.zacherythomas.com/images/eyes.jpg");
+sources.push("http://68.media.tumblr.com/ef7eb04a5774fbdb183d93e4a91d9fa5/tumblr_ovfijeR9Dy1uojm1ao9_1280.jpg");
 sources.push("http://68.media.tumblr.com/f2dd914736f5fda3746dbb9932e241db/tumblr_ovfijeR9Dy1uojm1ao1_250.jpg");
 
 var Elements = []
+var highlightSelected = true;
 
 function Sprite(src) {
     this.image = new Image();
     this.image.src = src;
 }
 
-function Element(x, y, z, name, static, sprite){
+function Element(x, y, z, name, static, sprite, active){
     this.name = name
     this.static = static
     this.sprite = sprite
@@ -22,18 +24,19 @@ function Element(x, y, z, name, static, sprite){
     this.X = x
     this.Y = y
     this.Z = z
+    this.active = active
 }
 
 var picture = new Sprite(sources[0]);
-var eye = new Element(0, 0, 0, 'eye1', false, picture)
+var eye = new Element(0, 0, 0, {suite: 1, value: 1}, false, picture, true)
 Elements.push(eye)
 
 var picture = new Sprite(sources[1]);
-var card = new Element(300, 0, 0, 'card', false, picture)
+var card = new Element(300, 0, 0, {suite: 1, value: 2}, false, picture, true)
 Elements.push(card)
 
-var picture = new Sprite(sources[1]);
-var static_card = new Element(600, 0, 0, 'static_card', true, picture)
+var picture = new Sprite(sources[2]);
+var static_card = new Element(600, 0, 0, {suite: 1, value: 3}, true, picture, true)
 Elements.push(static_card)
 
 mouseDownToggle = false
@@ -146,7 +149,13 @@ dHandler = new dragHandler()
 
 
 function update() {
+    let overlaps = checkOverlap();
+
     if (mouseUpToggle){
+        if (overlaps.length > 0){
+            console.log(overlaps);
+            handleCollisions(overlaps);
+        }
         dHandler.mouseUp()
         mouseUpToggle = false
     }
@@ -159,17 +168,15 @@ function update() {
         mouseDownToggle = false
     }
 
-    overlaps = checkOverlap()
-    if (overlaps.length > 0){
-        console.log(overlaps)
-    }
+    
+    
 }
 
 function draw() {
     canvas.width = canvas.width;
 
-    //draw outline around image w/ focus
-    if (dHandler.drag_element) {
+    //draw outline around image w/ focus if desired
+    if (dHandler.drag_element && highlightSelected) {
         context.beginPath();
         context.lineWidth = "6";
         context.strokeStyle = "red";
@@ -179,16 +186,92 @@ function draw() {
     }
         
     for (var iter = 0; iter < Elements.length; iter++) {
-        context.drawImage(Elements[iter].sprite.image, Elements[iter].X, Elements[iter].Y, Elements[iter].width, Elements[iter].height);
+        if(Elements[iter].active)
+            context.drawImage(Elements[iter].sprite.image, Elements[iter].X, Elements[iter].Y, Elements[iter].width, Elements[iter].height);
 
     }
 
 }
 
 function game_loop() {
-  update();
-  draw();
+    highlightSelected = false;
+
+    update();
+    draw();
 }
 
 
 setInterval(game_loop, 30);
+
+/**
+ * Determines how to handle collisions for the game implementation.
+ * Input is all 
+ * @param {*} overlaps 
+ */
+function handleCollisions(overlaps){
+    let collision = overlaps.pop();
+    if(collision[0].static && !collision[1].static)
+        Elements.splice(Elements.indexOf(collision[1]), 1);
+    else if(!collision[0].static && collision[1].static)
+        Elements.splice(Elements.indexOf(collision[0]), 1);
+    else {
+        let card0 = collision[0].name;
+        let card1 = collision[1].name;
+        let newName = {suite: getNewSuite(card0.suite, card1.suite), value: 1 + (card0.value + card1.value-1) % 13};
+
+        let newCard = new Sprite(sources[(newName.suite-1)*14 + newName.value - 1]);
+        Elements.push(new Element(collision[1].X, collision[1].Y, collision[1].Z, newName, false, newCard, true));
+        Elements.splice(Elements.indexOf(collision[1]), 1);
+        Elements.splice(Elements.indexOf(collision[0]), 1);
+    }
+
+}
+
+/**
+ * Create the static Elements for the game implementation
+ */
+function createStaticElements() {
+
+}
+
+/**
+ * This is an extension of quaternians to i,j,k,l 
+ * clubs = 1
+ * hearts = 2
+ * diamonds = 3
+ * spades = 4 
+ */
+function getNewSuite(suite1, suite2) {
+    if(suite1 == 1){
+        switch(suite2) {
+            case 1: return 1;
+            case 2: return 3;
+            case 3: return 4;
+            case 4: return 2;
+        }
+    }
+    else if(suite1 == 2){
+        switch(suite2) {
+            case 1: return 3;
+            case 2: return 2;
+            case 3: return 4;
+            case 4: return 1;
+        }
+    }
+    else if(suite1 == 3){
+        switch(suite2) {
+            case 1: return 2;
+            case 2: return 4;
+            case 3: return 3;
+            case 4: return 1;
+        }
+    }
+    else if(suite1 == 4){
+        switch(suite2) {
+            case 1: return 2;
+            case 2: return 3;
+            case 3: return 1;
+            case 4: return 4;
+        }
+    }
+}
