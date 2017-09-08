@@ -103,8 +103,9 @@ class Game{
                 this.dHandler.drag_element = newElement;
             }
         }
+
         this.w16.mouse.reset()
-    
+
     }
 
 
