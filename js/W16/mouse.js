@@ -21,6 +21,20 @@ class Mouse {
         })
     }
 
+    onBody(body) {
+        var minX = body.X;
+        var maxX = body.X + body.width;
+        var minY = body.Y;
+        var maxY = body.Y + body.height;
+        var mx = this.position.X;
+        var my = this.position.Y;
+    
+        if (mx >= minX && mx <= maxX && my >= minY && my <= maxY) {
+            return true;
+        }
+        return false;
+    }
+
     reset(){
         // Do not reset position
         // if reset, mouse position could be undefined while the mouse still appears on the canvas

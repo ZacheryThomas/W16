@@ -5,8 +5,32 @@ context = canvas.getContext('2d');
 
 
 class W16 {
+    constructor (){
+        this.World = []
+        this.overlaps = []
+        this.mouse = new Mouse()
+        this.run()
+    }
+
+    run(){
+        self = this
+        setInterval(function(){
+            self.update();
+            self.draw();
+        } , 30);
+    }
+
     update(){
-        // do stuff, prob physics later on
+        // call update for every body in world
+        for (var body of this.World){
+            body.update()
+        }
+
+        // clear mouse input
+        this.mouse.reset()
+
+        // Find overlaps
+        this.overlaps = this.checkOverlaps()
 
         // trigger event for update
         this.triggerEvent('update')
@@ -19,9 +43,9 @@ class W16 {
         // redraw all of canvas
         canvas.width = canvas.width;
         
-        // draw each element
-        for (var element of this.Elements) {
-            context.drawImage(element.sprite.image, element.X, element.Y, element.width, element.height);
+        // draw each body in world
+        for (var body of this.World) {
+            context.drawImage(body.image, body.X, body.Y, body.width, body.height);
             context.stroke()
         }
 
@@ -35,96 +59,33 @@ class W16 {
         window.dispatchEvent(event)
     }
 
-    game_loop() {
-        self.update();
-        self.draw();
-    }
-  
 
-    run(){
-        self = this
-        setInterval(function(){
-            self.game_loop();
-        } , 30);
+    addToWorld(body){
+        this.World.push(body)
     }
 
 
-    constructor (){
-        this.Elements = []
-        this.mouse = new Mouse()
-        this.run()
-    }
-
-
-    checkMouseOn(obj, x, y) {
-        var minX = obj.X;
-        var maxX = obj.X + obj.width;
-        var minY = obj.Y;
-        var maxY = obj.Y + obj.height;
-        var mx = x;
-        var my = y;
-    
-        if (mx >= minX && mx <= maxX && my >= minY && my <= maxY) {
-            return true;
-        }
-        return false;
-    }
-
-
-    Sprite(src) {
-        var image = new Image();
-        image.src = src
-
-        var sprite = {}
-        sprite.image = image
-        return sprite;
-    }
-
-
-    Element(x, y, z, name, is_static, sprite, active, width, height){
-        var ele = {}
-        ele.name = name
-        ele.static = is_static
-        ele.sprite = sprite
-        ele.width = width
-        ele.height = height
-        ele.X = x
-        ele.Y = y
-        ele.Z = z
-        ele.active = active
-        return ele
-    }
-
-
-    addToWorld(element){
-        this.Elements.push(element)
-    }
-
-
-    checkOverlap(){
+    checkOverlaps(){
         var overlapping = []
-        for (var obj1 of this.Elements){
-            for (var obj2 of this.Elements){
-                if (obj1 === obj2){
+        for (var body1 of this.World){
+            for (var body2 of this.World){
+                if (body1 === body2){
                     continue
                 }
-
-                if (!obj1.active || !obj2.active)
-                    continue;
 
                 // Enure that leftmost edge of pic1 is less than the furthest right edge of pic2
                 // and rightmost edge of pic one is less than the furthest edge of pic2
                 // same with height
-                var inBoundsX = (obj1.X < obj2.X + obj2.width) && (obj1.X + obj1.width > obj2.X)
-                var inBoundsY = (obj1.Y < obj2.Y + obj2.height) && (obj1.Y + obj1.height > obj2.Y)
+                var inBoundsX = (body1.X < body2.X + body2.width) && (body1.X + body1.width > body2.X)
+                var inBoundsY = (body1.Y < body2.Y + body2.height) && (body1.Y + body1.height > body2.Y)
                 
                 if (inBoundsX && inBoundsY){
-                    var combo = [obj2, obj1]
+                    var combo = [body2, body1]
     
-                    // Make sure that this combo of elements doesnt exist in list already
+                    // Make sure that this combo of body doesnt exist in list already
                     var exists = false
-                    for (var element of overlapping){
-                        if (element[1] == combo[0] && element[0] == combo[1]){
+                    for (var body of overlapping){
+                        if (body[1] == combo[0] && body[0] == combo[1]){
                             exists = true
                         }
                     }

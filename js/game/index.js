@@ -17,162 +17,164 @@ sources.push("http://i.imgur.com/HaX7Rxu.jpg");
 sources.push("http://i.imgur.com/6vTDzZ2.jpg");
 sources.push("http://i.imgur.com/fiRQpEF.jpg");
 
-function dragHandler(w16){
-    this.w16 = w16
-    this.drag_element = undefined
-    this.offsetX = 0
-    this.offsetY = 0
 
-    this.mouseMove = function() {
-        if (this.drag_element) {
-            this.drag_element.X = this.w16.mouse.position.X - this.offsetX
-            this.drag_element.Y = this.w16.mouse.position.Y - this.offsetY
-        }
-    }
+//Sprite height and width
+global_sprite_width = 165;
+global_sprite_height = 255;
 
-    this.mouseDown = function() {
-        for (var iter = 0; iter < this.w16.Elements.length; iter++) {
-            if (this.w16.checkMouseOn(this.w16.Elements[iter], this.w16.mouse.position.X, this.w16.mouse.position.Y)) {
-                this.drag_element = this.w16.Elements[iter]
+w16 = new W16()
 
-                this.offsetX = this.w16.mouse.position.X - this.drag_element.X
-                this.offsetY = this.w16.mouse.position.Y - this.drag_element.Y
-            }
-        }
-    }
-
-    this.mouseUp = function() {
-        this.drag_element = undefined
-    }
-}
-
-class Game{
-
+class Card extends Body{
     constructor(){
+        super()
+        this.beingDragged = false
+        this.draggable = true
+        this.mouseOffset = {'X': 0, 'Y': 0}
+    }
+
+    onMouseMove() {
+        if (this.beingDragged){
+            this.X = w16.mouse.position.X - this.mouseOffset.X
+            this.Y = w16.mouse.position.Y - this.mouseOffset.Y
+
+            var index = w16.World.indexOf(this)
+            if (index > -1){
+                w16.World.splice(index, 1)
+                w16.World.push(this)
+            }
+        }
+    }
+
+    onMouseDown() {
+        if (w16.mouse.onBody(this)) {
+            this.mouseOffset.X = w16.mouse.position.X - this.X
+            this.mouseOffset.Y = w16.mouse.position.Y - this.Y
+
+            if (this.draggable){
+                this.beingDragged = true
+
+            } else {            
+                // if you end up trying to drag a card from 'deck' i.e. try to drag static card
+                // code generates identical, non-static card and sets that as currently dragged element
+                this.beingDragged = false
+
+                // shallow copy
+                var card = new Card()
+                card.X = this.X
+                card.Y = this.Y
+                card.width = this.width
+                card.height = this.height
+                card.image = this.image
+                card.name = this.name
+                card.mouseOffset = this.mouseOffset
+
+                card.draggable = true
+                card.beingDragged = true
+
+                w16.addToWorld(card)
+                
+            }
+        }
+    }
+
+    onMouseUp() {
+        this.beingDragged = false
+    }
+
+    update(){
+        let overlaps = w16.overlaps;
         
-        this.highlightSelected = true;
-
-        //Sprite height and width
-        this.global_sprite_width = 165;
-        this.global_sprite_height = 255;
-
-        this.w16 = new W16()
-
-        this.dHandler = new dragHandler(this.w16)
-
-        var game = this
-        window.addEventListener('update', function(){game.update()})
-        window.addEventListener('draw', function(){game.draw()})
-
-        this.init()
-    }
-
-    init(){
-        this.w16.Elements.push( this.w16.Element(10, 0, 0, {suite: 1, value: 1}, true, this.w16.Sprite(sources[0]), true, this.global_sprite_width, this.global_sprite_height));
-    }
-
-
-    update() {
-        let overlaps = this.w16.checkOverlap();
-
-        if (this.w16.mouse.upEvent){
+        if (w16.mouse.upEvent){
             if (overlaps.length > 0){
-                this.handleCollisions(overlaps);
+                for (var collision of overlaps){
+                    if (collision.indexOf(this) > -1){
+                        this.handleCollisions(collision)
+                        overlaps.splice(overlaps.indexOf(collision), 1)
+                    }
+
+                }
             }
-            this.dHandler.mouseUp()
-        }
-        if (this.w16.mouse.moveEvent){
-            this.dHandler.mouseMove()
-        }
-        if (this.w16.mouse.downEvent){
-            this.dHandler.mouseDown()
-
-            // if you end up trying to drag a card from 'deck' i.e. try to drag static card
-            // code generates identical, non-static card and sets that as currently dragged element
-            if (this.dHandler.drag_element.static){
-                var newElement = this.w16.Element(this.dHandler.drag_element.X, 
-                    this.dHandler.drag_element.Y, 
-                    this.dHandler.drag_element.Z, 
-                    this.dHandler.drag_element.name, 
-                    false, 
-                    this.dHandler.drag_element.sprite, 
-                    true, 
-                    this.global_sprite_width, 
-                    this.global_sprite_height);
-                this.w16.addToWorld(newElement);
-                this.dHandler.drag_element = newElement;
-            }
+            this.onMouseUp()
         }
 
-        this.w16.mouse.reset()
+        if (w16.mouse.moveEvent){
+            this.onMouseMove()
+        }
 
+        if (w16.mouse.downEvent){
+            this.onMouseDown()
+        }
     }
 
-
-    draw() {
-
-        // draw outline around image being dragged
-        if (this.dHandler.drag_element) {
-
-            // always redraws currently dragged card
-            context.drawImage(this.dHandler.drag_element.sprite.image, this.dHandler.drag_element.X, this.dHandler.drag_element.Y,
-                this.dHandler.drag_element.width, this.dHandler.drag_element.height);
-
-            if (this.highlightSelected) {
-                context.beginPath();
-                context.lineWidth = "3";
-                context.strokeStyle = "red";
-                context.rect(this.dHandler.drag_element.X, this.dHandler.drag_element.Y, this.dHandler.drag_element.width, this.dHandler.drag_element.height);
-                context.stroke();
-            }
-        }
-
-    }
 
     /**
      * Determines how to handle collisions for the game implementation.
      * Input is all 
      * @param {*} overlaps 
      */
-    handleCollisions(overlaps){
-        let collision = overlaps.pop();
-        if(collision[0].static && !collision[1].static)
-            this.w16.Elements.splice(this.w16.Elements.indexOf(collision[1]), 1);
-        else if(!collision[0].static && collision[1].static)
-            this.w16.Elements.splice(this.w16.Elements.indexOf(collision[0]), 1);
-        else {
+    handleCollisions(collision){
+        if (!collision[0].draggable || !collision[1].draggable){
+            var worldCard = 0
+            if (!collision[0].draggable)
+                worldCard = 1
+
+            var cardInWorld = w16.World.indexOf(collision[worldCard])
+            if (cardInWorld > -1)
+                w16.World.splice(cardInWorld, 1);
+
+        } else {
             let card0 = collision[0].name;
             let card1 = collision[1].name;
             let newName = {suite: this.getNewSuite(card0.suite, card1.suite), value: 1 + (card0.value + card1.value - 1) % 13};
-
-            let newCardSprite = this.w16.Sprite(sources[(newName.suite-1) * 13 + newName.value - 1]);
-            this.w16.Elements.push( this.w16.Element(collision[1].X, collision[1].Y, collision[1].Z, newName, false, newCardSprite, true, this.global_sprite_width, this.global_sprite_height));
             
-            // remove this.w16.Elements from this.w16.Elements array
-            this.w16.Elements.splice(this.w16.Elements.indexOf(collision[1]), 1);
-            this.w16.Elements.splice(this.w16.Elements.indexOf(collision[0]), 1);
+            // add new, non static card to world
+            var card = new Card
+            card.X = collision[1].X
+            card.Y = collision[1].Y
+            card.width = global_sprite_width
+            card.height = global_sprite_height
+            card.name = newName
+            card.image.src = sources[(newName.suite-1) * 13 + newName.value - 1]
+            card.draggable = true
+            
+            // remove w16.Elements from w16.Elements array
+            w16.World.splice(w16.World.indexOf(collision[1]), 1);
+            w16.World.splice(w16.World.indexOf(collision[0]), 1);
+
+            w16.World.push(card)
+
+            // add new, static card to world
+            var card = new Card
+            card.X = 0
+            card.Y = 0
+            card.width = global_sprite_width
+            card.height = global_sprite_height
+            card.name = newName
+            card.image.src = sources[(newName.suite-1) * 13 + newName.value - 1]
+            card.draggable = false
 
             // attempts to generate info for static card
-            this.addStaticCard(this.w16.Element(10, 0, 0, newName, true, newCardSprite, true, this.global_sprite_width, this.global_sprite_height));
+            this.addStaticCard(card);
             this.sortStaticCards();
         }
 
     }
 
+
     /**
-     * Makes sure static card doesnt already exist and adds the new static card to this.w16.Elements
+     * Makes sure static card doesnt already exist and adds the new static card to w16.Elements
      * @param {*} newCard 
      */
     addStaticCard(newCard) {
         let cardExists = false;
-        for (let index = 0; index < this.w16.Elements.length; index++)
-            if (newCard.name.suite == this.w16.Elements[index].name.suite 
-                && this.w16.Elements[index].static 
-                && newCard.name.value == this.w16.Elements[index].name.value){
+        for (var card of w16.World)
+            if (newCard.name.suite == card.name.suite 
+                && !card.draggable 
+                && newCard.name.value == card.name.value){
                     cardExists = true;
                 }
         if (!cardExists)
-            this.w16.Elements.push(newCard);
+            w16.World.push(newCard);
     }
 
 
@@ -183,13 +185,13 @@ class Game{
         var padding = 5 // padding between cards in px
 
         let activeStaticElements = [];
-        for (let index = 0; index < this.w16.Elements.length; index++)
-            if(this.w16.Elements[index].active && this.w16.Elements[index].static)
-                activeStaticElements.push({pageIndex: (this.w16.Elements[index].name.suite-1)*13 + this.w16.Elements[index].name.value - 1, elmtIndex: index})
+        for (let index = 0; index < w16.World.length; index++)
+            if(!w16.World[index].draggable)
+                activeStaticElements.push({pageIndex: (w16.World[index].name.suite-1)*13 + w16.World[index].name.value - 1, elmtIndex: index})
         
         activeStaticElements = this.sortStaticCardArray(activeStaticElements)
         for (let index = 0; index < activeStaticElements.length; index++)
-            this.w16.Elements[activeStaticElements[index].elmtIndex].Y = (this.global_sprite_height + padding) * index;
+            w16.World[activeStaticElements[index].elmtIndex].Y = (global_sprite_height + padding) * index;
     }
 
 
@@ -250,6 +252,31 @@ class Game{
                 case 4: return 4;
             }
         }
+    }
+}
+
+class Game{
+
+    constructor(){
+        
+        this.highlightSelected = true;
+
+        this.init()
+    }
+
+    init(){
+        var card = new Card()
+        card.X = 0
+        card.Y = 0
+        card.width = global_sprite_width
+        card.height = global_sprite_height
+        card.name = {suite: 1, value: 1}
+        card.image.src = sources[0]
+
+        card.draggable = false
+
+        w16.addToWorld(card)
+        //w16.Elements.push( w16.Element(10, 0, 0, {suite: 1, value: 1}, true, w16.Sprite(sources[0]), true, this.global_sprite_width, this.global_sprite_height));
     }
 
 }
