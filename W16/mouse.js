@@ -21,6 +21,10 @@ class Mouse {
         })
     }
 
+    /**
+     * Checks to see if mouse position is inside of given body
+     * @param {*} body 
+     */
     onBody(body) {
         var minX = body.X;
         var maxX = body.X + body.width;
@@ -35,6 +39,9 @@ class Mouse {
         return false;
     }
 
+    /**
+     * resets mouse bool values to default state (false)
+     */
     reset(){
         // Do not reset position
         // if reset, mouse position could be undefined while the mouse still appears on the canvas

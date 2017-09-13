@@ -9,6 +9,7 @@ class W16 {
         this.World = []
         this.overlaps = []
         this.mouse = new Mouse()
+        this.keyboard = new Keyboard()
         this.run()
     }
 
@@ -17,7 +18,7 @@ class W16 {
         setInterval(function(){
             self.update();
             self.draw();
-        } , 30);
+        }, 30);
     }
 
     update(){
@@ -26,20 +27,19 @@ class W16 {
             body.update()
         }
 
-        // clear mouse input
-        this.mouse.reset()
-
         // Find overlaps
         this.overlaps = this.checkOverlaps()
 
-        // trigger event for update
-        this.triggerEvent('update')
+        // clear mouse input
+        this.mouse.reset()
+        
+        // clear keyboard bools
+        this.keyboard.reset()
+
     }
 
 
     draw(){
-        // render all in elements
-
         // redraw all of canvas
         canvas.width = canvas.width;
         
@@ -49,14 +49,6 @@ class W16 {
             context.stroke()
         }
 
-        // trigger event for draw
-        this.triggerEvent('draw')
-    }
-
-
-    triggerEvent(name){
-        var event = new Event(name)
-        window.dispatchEvent(event)
     }
 
 
