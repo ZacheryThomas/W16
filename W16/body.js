@@ -1,5 +1,10 @@
 class Body{
     constructor(){
+        this.width = 100
+        this.height = 100
+        this.X = 0
+        this.Y = 0
+        this.visible = true
         this.name = undefined
         this.image = new Image()
         this.children = []
@@ -7,9 +12,3 @@ class Body{
 
     update(){}
 }
-
-Body.prototype.width = 100
-Body.prototype.height = 100
-Body.prototype.X = 0
-Body.prototype.Y = 0
-Body.prototype.visible = true
