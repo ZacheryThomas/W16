@@ -7,15 +7,15 @@ class Mouse {
         }
 
         var current_mouse = this
-        canvas.addEventListener("mousedown", function(e){
+        window.addEventListener("mousedown", function(e){
             current_mouse.downEvent = true
         })
 
-        canvas.addEventListener("mouseup", function(e){
+        window.addEventListener("mouseup", function(e){
             current_mouse.upEvent = true
         })
 
-        canvas.addEventListener("mousemove", function(e){
+        window.addEventListener("mousemove", function(e){
             current_mouse.moveEvent = true,
             current_mouse.position = {'X': e.offsetX, 'Y': e.offsetY}
         })
