@@ -10,5 +10,19 @@ class Body{
         this.children = []
     }
 
+
+    /**
+     * Overwrite this to do stuff
+     */
     update(){}
+
+
+    /**
+     * Draws image. Can be overwritten to do fancy stuff.
+     * @param {*} context 
+     */
+    draw(context){
+        context.drawImage(this.image, this.X, this.Y, this.width, this.height);
+        context.stroke()
+    }
 }

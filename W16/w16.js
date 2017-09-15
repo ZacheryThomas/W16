@@ -45,8 +45,7 @@ class W16 {
         
         // draw each body in world
         for (var body of this.World) {
-            context.drawImage(body.image, body.X, body.Y, body.width, body.height);
-            context.stroke()
+            body.draw(context)
         }
 
     }
