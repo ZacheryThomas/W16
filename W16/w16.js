@@ -62,6 +62,10 @@ class W16 {
 
     }
 
+    clearWorld(){
+        this.World = []; 
+        this.overlaps = [];
+    }
 
     addToWorld(body){
         this.World.push(body)
