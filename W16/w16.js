@@ -17,12 +17,13 @@ class W16 {
      * Starts game update / drawing
      */
     run(ticks){
-        self = this
         if (this.intervalID == undefined){
+            self = this
+            let miliSecInterval = 1000 / ticks
             this.intervalID = setInterval(function(){
                 self.update();
                 self.draw();
-            }, ticks);
+            }, miliSecInterval);
         }
     }
 
