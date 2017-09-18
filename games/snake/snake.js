@@ -76,6 +76,7 @@ class Snake extends Body{
                     }
                 }
             }
+
             if(this.detectEdgeMove())
             this.endGame();
 
@@ -181,6 +182,10 @@ class Game{
     }
 
     init(){
+        w16.run(30) // start engine at 30 ticks per second
+
+        //w16.stop() to stop
+
         let head = new Snake()
         head.X = 40
         head.Y = 40
@@ -208,6 +213,18 @@ class Game{
         badfood.name = 'food';
         badfood.image.src = sources[2];
 
+        // keyboard controls
+        w16.keyboard.addBool('87', 'up') // w key
+        w16.keyboard.addBool('38', 'up') // up arrow
+
+        w16.keyboard.addBool('67', 'left') // a key
+        w16.keyboard.addBool('37', 'left') // left arrow
+
+        w16.keyboard.addBool('83', 'down') // s key
+        w16.keyboard.addBool('40', 'down') // down arrow
+
+        w16.keyboard.addBool('68', 'right') // d key
+        w16.keyboard.addBool('39', 'right') // right arrow
 
         w16.keyboard.addBool('37', 'left')
         w16.keyboard.addBool('38', 'up')

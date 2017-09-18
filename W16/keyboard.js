@@ -23,7 +23,7 @@ class Keyboard {
     /**
      * Adds user defined key event bool
      * 
-     * EX. kb.addBool('87', 'up') -> maps kb.up bool to 'w'
+     * EX. w16.keyboard.addBool('87', 'up') -> maps kb.up bool to 'w'
      * @param {*} key 
      * @param {*} event 
      */

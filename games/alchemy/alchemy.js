@@ -265,6 +265,8 @@ class Game{
     }
 
     init(){
+        w16.run(30) // start engine at 30 ticks per sec
+
         var card = new Card()
         card.X = 0
         card.Y = 0
@@ -276,7 +278,6 @@ class Game{
         card.draggable = false
 
         w16.addToWorld(card)
-        //w16.Elements.push( w16.Element(10, 0, 0, {suite: 1, value: 1}, true, w16.Sprite(sources[0]), true, this.global_sprite_width, this.global_sprite_height));
     }
 
 }
