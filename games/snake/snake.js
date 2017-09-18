@@ -62,6 +62,7 @@ class Snake extends Body{
     }
 
     update(){
+        this.changeDirection();
         if(this.ticks == 0){
             let overlaps = w16.overlaps;
             
@@ -91,10 +92,10 @@ class Snake extends Body{
      */
     handleCollisions(collision){
         if (!collision[0].name == 'food' && !collision[1].name == 'food')
-            endGame();
+            this.endGame();
         else if (collision[0].bad || collision[1].bad)
-            shrinkSnake() 
-        else growSnake();
+            this.shrinkSnake() 
+        else if(collision[0].name == 'head' || collision[1] == 'head') this.growSnake();
     }
 
     shrinkSnake() {
@@ -110,11 +111,12 @@ class Snake extends Body{
         tail.name = 'body'
         tail.image.src = sources[0]
         tail.direction.X = this.lastTailDirection.X;
-        tail.direction.Y = this.lastTailDirection.Y
+        tail.direction.Y = this.lastTailDirection.Y;
+        w16.addToWorld(tail);
     }
 
     detectEdgeMove(){
-        if(this.X<0 || this.Y < 0 || this.X >=global_canvas_width-20 || this.Y >= global_canvas_height-20)
+        if(this.X<0 || this.Y < 0 || this.X >=global_canvas_width || this.Y >= global_canvas_height)
             return true;
     }
 
@@ -126,19 +128,41 @@ class Snake extends Body{
     }
 
     changeDirection() {
-        
+        if(w16.keyboard.up){
+            if(this.direction.Y != 1) {
+                this.direction.Y = -1;
+                this.direction.X = 0;
+            }
+        }
+        if(w16.keyboard.down){
+            if(this.direction.Y != -1) {
+                this.direction.Y = 1;
+                this.direction.X = 0;
+            }
+        }
+        if(w16.keyboard.left){
+            if(this.direction.X != 1) {
+                this.direction.Y = 0;
+                this.direction.X = -1;
+            }
+        }
+        if(w16.keyboard.right){
+            if(this.direction.X != -1) {
+                this.direction.Y = 0;
+                this.direction.X = 1;
+            }
+        }
+
     }
 
     moveSnake() {
         this.children[0].X = this.children[0].X + this.stepDistance*this.children[0].direction.X;
         this.children[0].Y = this.children[0].Y + this.stepDistance*this.children[0].direction.Y;
+        this.lastTail.X = this.children[this.children.length-1].X;
+        this.lastTail.Y = this.children[this.children.length-1].Y;
+        this.lastTailDirection.X = this.children[this.children.length-1].direction.X;
+        this.lastTailDirection.Y = this.children[this.children.length-1].direction.Y;
         for (let i = 1; i<this.children.length; i++){
-            if(i==this.children.length-1){
-                this.lastTail.X = this.children[i].X;
-                this.lastTail.Y = this.children[i].Y;
-                this.lastTailDirection.X = this.children[i].direction.X;
-                this.lastTailDirection.Y = this.children[i].direction.Y;
-            }
             this.children[i].X = this.children[i].X + this.stepDistance*this.children[i].direction.X;
             this.children[i].Y = this.children[i].Y + this.stepDistance*this.children[i].direction.Y;
             this.children[i].direction.X = this.children[i-1].direction.X;
@@ -185,7 +209,10 @@ class Game{
         badfood.image.src = sources[2];
 
 
-
+        w16.keyboard.addBool('37', 'left')
+        w16.keyboard.addBool('38', 'up')
+        w16.keyboard.addBool('39', 'right')
+        w16.keyboard.addBool('40', 'down')
         w16.addToWorld(head)
         w16.addToWorld(food)
         w16.addToWorld(badfood)
