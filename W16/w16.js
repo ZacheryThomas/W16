@@ -71,8 +71,18 @@ class W16 {
         this.overlaps = [];
     }
 
-    addToWorld(body){
-        this.World.push(body)
+    addToWorld(body){        //this.World.push(body)
+        let addedBody = false
+        for (let index in this.World){
+            if (body.Z <= this.World[index].Z){
+                this.World.splice(index, 0, body)
+                addedBody = true
+                break
+            }
+        }
+        if (!addedBody){
+            this.World.push(body)
+        }
     }
 
     removeFromWorld(body){

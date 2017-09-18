@@ -67,15 +67,16 @@ class Snake extends Body {
     }
 
     draw(context) {
-            context.font = "20px Helvetica";
-            context.drawImage(this.image, this.X, this.Y, this.width, this.height);
-            context.fillText("Current Score: " + this.score, 0, 20);
-            context.fillText("High Score: " + high_score, 470, 20);
-            if (this.gameOver) {
-                context.font = "40px Helvetica"
-                context.fillText("Game Over", 200, 200);
-            }
-            context.stroke()
+        context.drawImage(this.image, this.X, this.Y, this.width, this.height);
+
+        context.font = "20px Helvetica";
+        context.fillText("Current Score: " + this.score, 0, 20);
+        context.fillText("High Score: " + high_score, 450, 20);
+        if (this.gameOver) {
+            context.font = "40px Helvetica"
+            context.fillText("Game Over", 200, 200);
+        }
+        context.stroke()
     }
 
     update() {
@@ -231,6 +232,7 @@ class Game {
         let head = new Snake()
         head.X = 40
         head.Y = 40
+        head.Z = 1
         head.width = global_sprite_width
         head.height = global_sprite_height
         head.name = 'head'
