@@ -55,6 +55,10 @@ class W16 {
         this.World.push(body)
     }
 
+    removeFromWorld(body){
+        this.World.splice(this.World.indexOf(body), 1);
+    }
+
 
     checkOverlaps(){
         var overlapping = []
