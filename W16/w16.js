@@ -10,7 +10,7 @@ class W16 {
         this.overlaps = []
         this.mouse = new Mouse()
         this.keyboard = new Keyboard()
-        this.intervalID = ''
+        this.intervalID = undefined
     }
 
     /**
@@ -18,10 +18,12 @@ class W16 {
      */
     run(ticks){
         self = this
-        this.intervalID = setInterval(function(){
-            self.update();
-            self.draw();
-        }, ticks);
+        if (this.intervalID == undefined){
+            this.intervalID = setInterval(function(){
+                self.update();
+                self.draw();
+            }, ticks);
+        }
     }
 
     /**
@@ -31,6 +33,7 @@ class W16 {
         if (this.intervalID != undefined){
             clearInterval(this.intervalID)
         }
+        this.intervalID = undefined
     }
 
     update(){
