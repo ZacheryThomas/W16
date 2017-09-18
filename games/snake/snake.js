@@ -189,6 +189,18 @@ class Game{
         badfood.name = 'food';
         badfood.image.src = sources[2];
 
+        // keyboard controls
+        w16.keyboard.addBool('87', 'up') // w key
+        w16.keyboard.addBool('38', 'up') // up arrow
+
+        w16.keyboard.addBool('67', 'left') // a key
+        w16.keyboard.addBool('37', 'left') // left arrow
+
+        w16.keyboard.addBool('83', 'down') // s key
+        w16.keyboard.addBool('40', 'down') // down arrow
+
+        w16.keyboard.addBool('68', 'right') // d key
+        w16.keyboard.addBool('39', 'right') // right arrow
 
 
         w16.addToWorld(head)
