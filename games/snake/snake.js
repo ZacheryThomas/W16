@@ -75,6 +75,7 @@ class Snake extends Body{
                     }
                 }
             }
+
             if(this.detectEdgeMove())
             this.endGame();
 
@@ -157,6 +158,10 @@ class Game{
     }
 
     init(){
+        w16.run(30) // start engine at 30 ticks per second
+
+        //w16.stop() to stop
+
         let head = new Snake()
         head.X = 40
         head.Y = 40
