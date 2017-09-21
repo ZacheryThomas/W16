@@ -82,7 +82,7 @@ class W16 {
         body.overlaps = function(){ return engine.checkOverlaps(body)}
 
         for (let index in this.World){
-            if (body.Z <= this.World[index].Z){
+            if (body.Z < this.World[index].Z){
                 this.World.splice(index, 0, body)
                 addedBody = true
                 break

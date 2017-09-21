@@ -36,12 +36,6 @@ class Card extends Body{
         if (this.beingDragged){
             this.X = w16.mouse.position.X - this.mouseOffset.X
             this.Y = w16.mouse.position.Y - this.mouseOffset.Y
-
-            var index = w16.World.indexOf(this)
-            if (index > -1){
-                w16.World.splice(index, 1)
-                w16.World.push(this)
-            }
         }
     }
 
@@ -53,7 +47,7 @@ class Card extends Body{
             if (this.draggable){
                 this.beingDragged = true
 
-            } else {            
+            } else {        
                 // if you end up trying to drag a card from 'deck' i.e. try to drag static card
                 // code generates identical, non-static card and sets that as currently dragged element
                 this.beingDragged = false
@@ -82,16 +76,11 @@ class Card extends Body{
     }
 
     update(){
-        let overlaps = w16.overlaps;
-        
         if (w16.mouse.upEvent){
+            let overlaps = this.overlaps();
             if (overlaps.length > 0){
                 for (var collision of overlaps){
-                    if (collision.indexOf(this) > -1){
-                        this.handleCollisions(collision)
-                        overlaps.splice(overlaps.indexOf(collision), 1)
-                    }
-
+                    this.handleCollisions(collision)
                 }
             }
             this.onMouseUp()
@@ -112,25 +101,19 @@ class Card extends Body{
      * Input is all 
      * @param {*} overlaps 
      */
-    handleCollisions(collision){
-        if (!collision[0].draggable || !collision[1].draggable){
-            var worldCard = 0
-            if (!collision[0].draggable)
-                worldCard = 1
-
-            var cardInWorld = w16.World.indexOf(collision[worldCard])
-            if (cardInWorld > -1)
-                w16.World.splice(cardInWorld, 1);
+    handleCollisions(body){
+        if (!body.draggable){
+            w16.removeFromWorld(this)
 
         } else {
-            let card0 = collision[0].name;
-            let card1 = collision[1].name;
+            let card0 = this.name;
+            let card1 = body.name;
             let newName = {suite: this.getNewSuite(card0.suite, card1.suite), value: 1 + (card0.value + card1.value - 1) % 13};
             
             // add new, non static card to world
             var card = new Card
-            card.X = collision[1].X
-            card.Y = collision[1].Y
+            card.X = this.X
+            card.Y = this.Y
             card.width = global_sprite_width
             card.height = global_sprite_height
             card.name = newName
@@ -138,10 +121,10 @@ class Card extends Body{
             card.draggable = true
             
             // remove w16.Elements from w16.Elements array
-            w16.World.splice(w16.World.indexOf(collision[1]), 1);
-            w16.World.splice(w16.World.indexOf(collision[0]), 1);
+            w16.removeFromWorld(this)
+            w16.removeFromWorld(body)
 
-            w16.World.push(card)
+            w16.addToWorld(card)
 
             // add new, static card to world
             var card = new Card
@@ -174,7 +157,7 @@ class Card extends Body{
                     cardExists = true;
                 }
         if (!cardExists)
-            w16.World.push(newCard);
+            w16.addToWorld(newCard)
     }
 
 
