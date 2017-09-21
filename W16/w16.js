@@ -11,6 +11,7 @@ class W16 {
         this.mouse = new Mouse()
         this.keyboard = new Keyboard()
         this.intervalID = undefined
+        this.prevUpdateMS = undefined
     }
 
     /**
@@ -38,13 +39,15 @@ class W16 {
     }
 
     update(){
+        let updateTime = Date.now()
+        
+        if (this.prevUpdateMS == undefined)
+            this.prevUpdateMS = updateTime
+
         // call update for every body in world
         for (var body of this.World){
-            body.update()
+            body.update(updateTime - this.prevUpdateMS)
         }
-
-        // Find overlaps
-        this.overlaps = this.checkOverlaps()
 
         // clear mouse input
         this.mouse.reset()
@@ -52,6 +55,7 @@ class W16 {
         // clear keyboard bools
         this.keyboard.reset()
 
+        this.prevUpdateMS = updateTime
     }
 
 
@@ -73,6 +77,10 @@ class W16 {
 
     addToWorld(body){        //this.World.push(body)
         let addedBody = false
+
+        let engine = this
+        body.overlaps = function(){ return engine.checkOverlaps(body)}
+
         for (let index in this.World){
             if (body.Z <= this.World[index].Z){
                 this.World.splice(index, 0, body)
@@ -90,39 +98,27 @@ class W16 {
     }
 
 
-    checkOverlaps(){
-        var overlapping = []
-        for (var body1 of this.World){
-            for (var body2 of this.World){
-                if (body1 === body2){
-                    continue
-                }
+    checkOverlaps(body){
+        var contacts = []
 
-                // Enure that leftmost edge of pic1 is less than the furthest right edge of pic2
-                // and rightmost edge of pic one is less than the furthest edge of pic2
-                // same with height
-                var inBoundsX = (body1.X < body2.X + body2.width) && (body1.X + body1.width > body2.X)
-                var inBoundsY = (body1.Y < body2.Y + body2.height) && (body1.Y + body1.height > body2.Y)
-                
-                if (inBoundsX && inBoundsY){
-                    var combo = [body2, body1]
-    
-                    // Make sure that this combo of body doesnt exist in list already
-                    var exists = false
-                    for (var body of overlapping){
-                        if (body[1] == combo[0] && body[0] == combo[1]){
-                            exists = true
-                        }
-                    }
-    
-                    if (!exists){
-                        overlapping.push(combo)
-                    }
-                }
+        // wb for world body
+        for (var wb of this.World){
+            if (body == wb)
+                continue
+
+            // Enure that leftmost edge of pic1 is less than the furthest right edge of pic2
+            // and rightmost edge of pic one is less than the furthest edge of pic2
+            // same with height
+            var inBoundsX = (body.X < wb.X + wb.width) && (body.X + body.width > wb.X)
+            var inBoundsY = (body.Y < wb.Y + wb.height) && (body.Y + body.height > wb.Y)
+            
+            if (inBoundsX && inBoundsY){
+                contacts.push(wb)
+                console.log(contacts)
             }
         }
 
-        return overlapping
+        return contacts
     }
 
 }

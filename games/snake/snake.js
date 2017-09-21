@@ -49,7 +49,18 @@ class Segment extends Body {
         this.bad = false;
         this.stepDistance = global_sprite_width;
         this.direction = { X: 0, Y: 0 };
+        this.child = undefined
     }
+
+    move(X, Y){
+        if (this.child != undefined){
+            this.child.move(this.X, this.Y)
+        }
+        this.X = X;
+        this.Y = Y;
+
+    }
+
 }
 
 class Snake extends Body {
@@ -60,10 +71,12 @@ class Snake extends Body {
         this.ticks = 5;
         this.direction = { X: 0, Y: 0 };
         this.lastDirection = { X: 0, Y: 0 };
-        this.lastTailDirection = { X: 0, Y: 0 };
-        this.lastTail = { X: 0, Y: 0 }
+        this.lastLoc = { X:0, Y: 0 };
         this.score = 0;
         this.gameOver = false;
+
+        this.child = undefined
+        this.tail = this
     }
 
     draw(context) {
@@ -81,30 +94,32 @@ class Snake extends Body {
 
     update() {
         this.changeDirection();
-        if (this.ticks == 0) {
-            if (this.detectEdgeMove())
-                this.endGame();
-            let overlaps = w16.overlaps;
 
-            if (overlaps.length > 0) {
-                for (var collision of overlaps) {
-                    if (collision.indexOf(this) > -1) {
-                        this.handleCollisions(collision)
-                        overlaps.splice(overlaps.indexOf(collision), 1)
-                    }
-                }
+        if (this.detectEdgeMove())
+            this.endGame();
+        
+        let overlaps = this.overlaps()
+        if (overlaps.length > 0) {
+            for (var collision of overlaps) {
+                this.handleCollisions(collision)
             }
-
-            this.moveSnake();
-
-            this.ticks = 5;
-            this.updateCurrentScore();
         }
-        else this.ticks--
+
+        this.moveSnake();
+
+        this.updateCurrentScore();
+        
     }
 
     updateCurrentScore() {
-        this.score = this.children.length - 1
+        this.score = 0
+        var seg = this.child
+
+        while(seg != undefined){
+            this.score += 1
+            seg = seg.child
+        }
+        //this.score = this.children.length - 1
         if (high_score < this.score)
             high_score = this.score;
     }
@@ -114,19 +129,16 @@ class Snake extends Body {
      * Input is all 
      * @param {*} overlaps 
      */
-    handleCollisions(collision) {
-        if (collision[0].name != 'food' && collision[1].name != 'food')
+    handleCollisions(body) {
+        if (body instanceof Segment){
             this.endGame();
-        else if (collision[0].bad || collision[1].bad)
-            this.shrinkSnake()
-        else if ((collision[0].name == 'head' && collision[1].name == 'food')){
-            collision[1].X = Math.floor(Math.random() * (global_canvas_width / 20)) * 20;
-            collision[1].Y = Math.floor(Math.random() * (global_canvas_height / 20)) * 20;
-            this.growSnake();
         }
-        else if ((collision[1].name == 'head' && collision[0].name == 'food')){
-            collision[0].X = Math.floor(Math.random() * (global_canvas_width / 20)) * 20;
-            collision[0].Y = Math.floor(Math.random() * (global_canvas_height / 20)) * 20;
+        else if (body.bad){
+            this.shrinkSnake()
+        }
+        else if (body.name == 'food'){
+            body.X = Math.floor(Math.random() * (global_canvas_width / 20)) * 20;
+            body.Y = Math.floor(Math.random() * (global_canvas_height / 20)) * 20;
             this.growSnake();
         }
     }
@@ -137,17 +149,15 @@ class Snake extends Body {
 
     growSnake() {
         let tail = new Segment()
-        tail.X = this.lastTail.X;
-        tail.Y = this.lastTail.Y;
+        tail.X = this.X;
+        tail.Y = this.Y;
         tail.width = global_sprite_width
         tail.height = global_sprite_height
         tail.name = 'body'
         tail.image.src = sources[0]
-        tail.direction.X = this.lastTailDirection.X;
-        tail.direction.Y = this.lastTailDirection.Y;
 
-        this.children.push(tail);
-
+        this.tail.child = tail
+        this.tail = tail
         w16.addToWorld(tail);
     }
 
@@ -159,10 +169,6 @@ class Snake extends Body {
     }
 
     endGame() {
-        for (let seg of this.children) {
-            seg.direction.X = 0;
-            seg.direction.Y = 0;
-        }
         w16.stop();
         this.gameOver = true;
     }
@@ -196,22 +202,15 @@ class Snake extends Body {
     }
 
     moveSnake() {
-        this.lastTail.X = this.children[this.children.length - 1].X;
-        this.lastTail.Y = this.children[this.children.length - 1].Y;
-        this.lastTailDirection.X = this.children[this.children.length - 1].direction.X;
-        this.lastTailDirection.Y = this.children[this.children.length - 1].direction.Y;
+        if (this.child)
+            this.child.move(this.X, this.Y)
 
-        for (let i = this.children.length - 1; i > 0; i--) {
-            this.children[i].X = this.children[i].X + this.stepDistance * this.children[i].direction.X;
-            this.children[i].Y = this.children[i].Y + this.stepDistance * this.children[i].direction.Y;
-            this.children[i].direction.X = this.children[i - 1].direction.X;
-            this.children[i].direction.Y = this.children[i - 1].direction.Y;
-        }
+        this.X = this.X + this.stepDistance * this.direction.X;
+        this.Y = this.Y + this.stepDistance * this.direction.Y;
 
-        this.children[0].X = this.children[0].X + this.stepDistance * this.children[0].direction.X;
-        this.children[0].Y = this.children[0].Y + this.stepDistance * this.children[0].direction.Y;
         this.lastDirection.X = this.direction.X;
         this.lastDirection.Y = this.direction.Y;
+
     }
 }
 
@@ -225,7 +224,7 @@ class Game {
     }
 
     init() {
-        w16.run(30) // start engine at 30 ticks per second
+        w16.run(15) // start engine at 15 ticks per second
 
         //w16.stop() to stop
 
@@ -238,8 +237,6 @@ class Game {
         head.name = 'head'
         head.image.src = sources[0]
         head.direction.X = 1;
-
-        head.children.push(head);
 
         let food = new Food(false);
         food.X = Math.floor(Math.random() * (global_canvas_width / 20)) * 20;
