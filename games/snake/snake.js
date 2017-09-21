@@ -144,7 +144,13 @@ class Snake extends Body {
     }
 
     shrinkSnake() {
-        w16.removeFromWorld(this.children.pop())
+        var seg = this
+        while(seg.child.child != undefined){
+            seg = seg.child
+        }
+        w16.removeFromWorld(this.tail)   
+        this.tail = seg
+        this.tail.child = undefined
     }
 
     growSnake() {
