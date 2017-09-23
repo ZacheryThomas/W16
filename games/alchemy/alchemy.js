@@ -34,6 +34,7 @@ class Card extends Body{
 
     onMouseMove() {
         if (this.beingDragged){
+            this.Z = 1
             this.X = w16.mouse.position.X - this.mouseOffset.X
             this.Y = w16.mouse.position.Y - this.mouseOffset.Y
         }
@@ -72,6 +73,7 @@ class Card extends Body{
     }
 
     onMouseUp() {
+        this.Z = 0
         this.beingDragged = false
     }
 

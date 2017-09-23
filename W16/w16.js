@@ -60,6 +60,10 @@ class W16 {
 
 
     draw(){
+        var drawOrder = this.World.sort(function (a, b) {
+            return a.Z - b.Z;
+        });
+
         // redraw all of canvas
         canvas.width = canvas.width;
         
@@ -75,22 +79,10 @@ class W16 {
         this.overlaps = [];
     }
 
-    addToWorld(body){        //this.World.push(body)
-        let addedBody = false
-
+    addToWorld(body){
         let engine = this
         body.overlaps = function(){ return engine.checkOverlaps(body)}
-
-        for (let index in this.World){
-            if (body.Z < this.World[index].Z){
-                this.World.splice(index, 0, body)
-                addedBody = true
-                break
-            }
-        }
-        if (!addedBody){
-            this.World.push(body)
-        }
+        this.World.push(body)
     }
 
     removeFromWorld(body){
