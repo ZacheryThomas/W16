@@ -1,11 +1,10 @@
 // By: Alex Card and Zachery Thomas
 
+w16 = new W16()
 
-var sources = new Array();
-sources.push("https://upload.wikimedia.org/wikipedia/commons/6/68/Solid_black.png");
-sources.push("https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Solid_green.svg/512px-Solid_green.svg.png");
-sources.push("https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Red.svg/512px-Red.svg.png");
-
+w16.resources.addImage('snake', 'https://upload.wikimedia.org/wikipedia/commons/6/68/Solid_black.png');
+w16.resources.addImage('good food', 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Solid_green.svg/512px-Solid_green.svg.png');
+w16.resources.addImage('bad food', 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Red.svg/512px-Red.svg.png');
 
 //Sprite height and width
 global_sprite_width = 20;
@@ -13,9 +12,7 @@ global_sprite_height = 20;
 global_canvas_height = document.getElementById("whyupdate").height;
 global_canvas_width = document.getElementById("whyupdate").width;
 
-
 var high_score = 0;
-w16 = new W16()
 
 class Food extends Body {
     constructor(bad) {
@@ -80,7 +77,7 @@ class Snake extends Body {
     }
 
     draw(context) {
-        context.drawImage(this.image, this.X, this.Y, this.width, this.height);
+        context.drawImage(w16.resources.getImage(this.image), this.X, this.Y, this.width, this.height);
 
         context.font = "20px Helvetica";
         context.fillText("Current Score: " + this.score, 0, 20);
@@ -160,7 +157,7 @@ class Snake extends Body {
         tail.width = global_sprite_width
         tail.height = global_sprite_height
         tail.name = 'body'
-        tail.image.src = sources[0]
+        tail.image = 'snake'
 
         this.tail.child = tail
         this.tail = tail
@@ -241,7 +238,7 @@ class Game {
         head.width = global_sprite_width
         head.height = global_sprite_height
         head.name = 'head'
-        head.image.src = sources[0]
+        head.image = 'snake'
         head.direction.X = 1;
 
         let food = new Food(false);
@@ -249,16 +246,16 @@ class Game {
         food.Y = Math.floor(Math.random() * (global_canvas_height / 20)) * 20;
         food.width = global_sprite_width
         food.height = global_sprite_height
-        food.name = 'food';
-        food.image.src = sources[1];
+        food.name = 'food'
+        food.image = 'good food'
 
         let badfood = new Food(true);
         badfood.X = -40;
         badfood.Y = -40;
         badfood.width = global_sprite_width
         badfood.height = global_sprite_height
-        badfood.name = 'food';
-        badfood.image.src = sources[2];
+        badfood.name = 'food'
+        badfood.image = 'bad food'
 
         // keyboard controls
         w16.keyboard.addBool('87', 'up') // w key

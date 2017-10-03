@@ -10,6 +10,8 @@ class W16 {
         this.overlaps = []
         this.mouse = new Mouse()
         this.keyboard = new Keyboard()
+        this.resources = new Resources()
+        this.splash = new Splash()
         this.intervalID = undefined
         this.prevUpdateMS = undefined
     }
@@ -18,11 +20,20 @@ class W16 {
      * Starts game update / drawing
      */
     run(ticks){
+        this.resources.loadImages()
+        this.splash.start()
         if (this.intervalID == undefined){
             self = this
+            this.loading = true
             let miliSecInterval = 1000 / ticks
-            this.intervalID = setInterval(function(){
-                self.update();
+            self.intervalID = setInterval(function(){
+                if (self.resources.imagesLoaded()){
+                    if(self.loading) {
+                        self.splash.end()
+                        self.loading = false
+                    }
+                    self.update();
+                }
                 self.draw();
             }, miliSecInterval);
         }
@@ -68,7 +79,7 @@ class W16 {
         canvas.width = canvas.width;
         
         // draw each body in world
-        for (var body of this.World) {
+        for (var body of drawOrder) {
             body.draw(context)
         }
 
@@ -81,7 +92,7 @@ class W16 {
 
     addToWorld(body){
         let engine = this
-        body.overlaps = function(){ return engine.checkOverlaps(body)}
+        body.overlaps = function(){ return engine.checkOverlaps(body) }
         this.World.push(body)
     }
 

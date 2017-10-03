@@ -1,28 +1,27 @@
 // By: Alex Card and Zachery Thomas
 
 
-var sources = new Array();
+w16 = new W16()
+
 //used with permission from the Artist: Merve Naz Yelmen
-sources.push("http://i.imgur.com/IztPI0x.jpg");
-sources.push("http://i.imgur.com/hZt6pAX.jpg");
-sources.push("http://i.imgur.com/zV3vhYN.jpg");
-sources.push("http://i.imgur.com/W9rH7rc.jpg");
-sources.push("http://i.imgur.com/czjRYl6.jpg");
-sources.push("http://i.imgur.com/ggo09ED.jpg");
-sources.push("http://i.imgur.com/IA4R4AY.jpg");
-sources.push("http://i.imgur.com/gTZJnUU.jpg");
-sources.push("http://i.imgur.com/TxGfNWT.jpg");
-sources.push("http://i.imgur.com/zRCIRkL.jpg");
-sources.push("http://i.imgur.com/HaX7Rxu.jpg");
-sources.push("http://i.imgur.com/6vTDzZ2.jpg");
-sources.push("http://i.imgur.com/fiRQpEF.jpg");
+w16.resources.addImage('1', 'http://i.imgur.com/IztPI0x.jpg');
+w16.resources.addImage('2', 'http://i.imgur.com/hZt6pAX.jpg');
+w16.resources.addImage('3', 'http://i.imgur.com/zV3vhYN.jpg');
+w16.resources.addImage('4', 'http://i.imgur.com/W9rH7rc.jpg');
+w16.resources.addImage('5', 'http://i.imgur.com/czjRYl6.jpg');
+w16.resources.addImage('6', 'http://i.imgur.com/ggo09ED.jpg');
+w16.resources.addImage('7', 'http://i.imgur.com/IA4R4AY.jpg');
+w16.resources.addImage('8', 'http://i.imgur.com/gTZJnUU.jpg');
+w16.resources.addImage('9', 'http://i.imgur.com/TxGfNWT.jpg');
+w16.resources.addImage('10', 'http://i.imgur.com/zRCIRkL.jpg');
+w16.resources.addImage('11', 'http://i.imgur.com/HaX7Rxu.jpg');
+w16.resources.addImage('12', 'http://i.imgur.com/6vTDzZ2.jpg');
+w16.resources.addImage('13', 'http://i.imgur.com/fiRQpEF.jpg');
 
 
 //Sprite height and width
 global_sprite_width = 165;
 global_sprite_height = 255;
-
-w16 = new W16()
 
 class Card extends Body{
     constructor(){
@@ -119,7 +118,7 @@ class Card extends Body{
             card.width = global_sprite_width
             card.height = global_sprite_height
             card.name = newName
-            card.image.src = sources[(newName.suite-1) * 13 + newName.value - 1]
+            card.image = (newName.suite-1) * 13 + newName.value
             card.draggable = true
             
             // remove w16.Elements from w16.Elements array
@@ -135,7 +134,7 @@ class Card extends Body{
             card.width = global_sprite_width
             card.height = global_sprite_height
             card.name = newName
-            card.image.src = sources[(newName.suite-1) * 13 + newName.value - 1]
+            card.image = (newName.suite-1) * 13 + newName.value
             card.draggable = false
 
             // attempts to generate info for static card
@@ -258,7 +257,7 @@ class Game{
         card.width = global_sprite_width
         card.height = global_sprite_height
         card.name = {suite: 1, value: 1}
-        card.image.src = sources[0]
+        card.image = '1'
 
         card.draggable = false
 

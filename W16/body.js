@@ -7,7 +7,7 @@ class Body{
         this.Z = 0
         this.visible = true
         this.name = undefined
-        this.image = new Image()
+        this.image = ''
         this.children = []
     }
 
@@ -23,7 +23,7 @@ class Body{
      * @param {*} context 
      */
     draw(context){
-        context.drawImage(this.image, this.X, this.Y, this.width, this.height);
+        context.drawImage(w16.resources.getImage(this.image), this.X, this.Y, this.width, this.height);
         context.stroke()
     }
 }
