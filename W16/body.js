@@ -5,10 +5,13 @@ class Body{
         this.X = 0
         this.Y = 0
         this.Z = 0
+        this.angle = 0
         this.visible = true
         this.name = undefined
         this.image = ''
         this.children = []
+        this.physics_body = undefined
+        this.center = {'x': 0, 'y': 0}
     }
 
 
@@ -23,7 +26,13 @@ class Body{
      * @param {*} context 
      */
     draw(context){
-        context.drawImage(w16.resources.getImage(this.image), this.X, this.Y, this.width, this.height);
-        context.stroke()
+        context.save()
+        context.translate(this.X + this.center.x, this.Y + this.center.y)
+        context.rotate(this.angle)
+
+        context.drawImage(w16.resources.getImage(this.image), - this.center.x, - this.center.y, 
+                                                    this.width, this.height);
+        context.restore()
     }
+
 }

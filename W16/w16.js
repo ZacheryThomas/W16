@@ -12,8 +12,10 @@ class W16 {
         this.keyboard = new Keyboard()
         this.resources = new Resources()
         this.splash = new Splash()
+        this.physics = new Physics()
+        this.physics_enabled = false
         this.intervalID = undefined
-        this.prevUpdateMS = undefined
+        this.prevUpdateMS = Date.now()
     }
 
     /**
@@ -51,13 +53,23 @@ class W16 {
 
     update(){
         let updateTime = Date.now()
-        
-        if (this.prevUpdateMS == undefined)
-            this.prevUpdateMS = updateTime
+
+        let delta = updateTime - this.prevUpdateMS
+
+        if (this.physics_enabled)
+            w16.physics.update(delta)
 
         // call update for every body in world
         for (var body of this.World){
-            body.update(updateTime - this.prevUpdateMS)
+
+            // copy physics body position / angle to reg body
+            if (body.physics_body){
+                body.X = body.physics_body.position.x
+                body.Y = body.physics_body.position.y
+                body.angle = body.physics_body.angle
+            }
+
+            body.update(delta)
         }
 
         // clear mouse input
@@ -86,6 +98,7 @@ class W16 {
     }
 
     clearWorld(){
+        this.physics.clear()
         this.World = []; 
         this.overlaps = [];
     }
@@ -94,10 +107,16 @@ class W16 {
         let engine = this
         body.overlaps = function(){ return engine.checkOverlaps(body) }
         this.World.push(body)
+
+        if (body.physics_body)
+            this.physics.add(body.physics_body)
     }
 
     removeFromWorld(body){
         this.World.splice(this.World.indexOf(body), 1);
+
+        if (body.physics_body)
+            this.Physics.remove(body.physics_body)
     }
 
 
@@ -117,7 +136,6 @@ class W16 {
             
             if (inBoundsX && inBoundsY){
                 contacts.push(wb)
-                console.log(contacts)
             }
         }
 

@@ -13,7 +13,6 @@ class splashText extends Body {
     getCount(){
         this.tick += 1
         if (this.tick > 6){ this.tick = 0}
-        console.log(this.tick)
         return this.tick
     }
 
