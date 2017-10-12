@@ -116,7 +116,7 @@ class W16 {
         this.World.splice(this.World.indexOf(body), 1);
 
         if (body.physics_body)
-            this.Physics.remove(body.physics_body)
+            this.physics.remove(body.physics_body)
     }
 
 

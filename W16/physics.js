@@ -8,6 +8,8 @@ class Physics {
         this.Bodies = Matter.Bodies
         
         this.engine = this.Engine.create();
+
+        Matter.Engine.run(this.engine)
     }
 
 
@@ -62,6 +64,12 @@ class Physics {
      * @param {*} delta 
      */
     update(delta){
+        /*
+            TBH this isnt that useful anymore.
+            Updated to run as fast as possible.
+            If update by step, engine can miss a lot and glitch out.
+        */
+
         if (this.lastDelta == undefined)
             this.lastDelta = delta
 
@@ -71,7 +79,7 @@ class Physics {
         if(delta > 20)console.log(delta)
 
         // update engine one step
-        Matter.Engine.update(this.engine, delta, correction)
+        //Matter.Engine.update(this.engine, delta, correction)
         
         this.lastDelta = delta
     }
