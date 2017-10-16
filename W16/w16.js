@@ -16,6 +16,12 @@ class W16 {
         this.physics_enabled = false
         this.intervalID = undefined
         this.prevUpdateMS = Date.now()
+        this.background = false
+        this.score = -1
+        this.high_score = -1
+        this.game_over = false
+        this.tickReceivers = []
+        this.score_color = 'black';
     }
 
     /**
@@ -39,6 +45,10 @@ class W16 {
                 self.draw();
             }, miliSecInterval);
         }
+    }
+
+    broadcastTicks() {
+
     }
 
     /**
@@ -90,6 +100,22 @@ class W16 {
         // redraw all of canvas
         canvas.width = canvas.width;
 
+        // Draw a background if there is one
+        if(this.background)
+            context.drawImage(this.resources.getImage('Background'), 0, 0)
+
+        // Display score if set
+        if(this.score>-1){
+            context.font = "20px Helvetica";
+            context.fillStyle = this.score_color;
+            context.fillText("Current Score: " + this.score, 70, 20);
+            if(this.high_score>-1)
+                context.fillText("High Score: " + this.high_score, canvas.width-200, 20);
+            if (this.game_over) {
+                context.font = "40px Helvetica"
+                context.fillText("Game Over", 200, 200);
+            }
+        }
         // draw each body in world
         for (var body of drawOrder) {
             body.draw(context)
@@ -121,6 +147,11 @@ class W16 {
 
         if (body.physics_body)
             this.physics.remove(body.physics_body)
+    }
+
+    updateScore(number) {
+        this.score += number;
+        this.high_score <= this.score ? this.high_score = this.score: this.high_score = this.high_score;
     }
 
 
