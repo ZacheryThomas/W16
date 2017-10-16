@@ -8,22 +8,22 @@ w16.resources.addImage('13', 'http://i.imgur.com/fiRQpEF.jpg');
 
 w16.physics_enabled = true
 
-canvas2 = document.getElementById("otherBoy");
+//canvas2 = document.getElementById("otherBoy");
 
 function wrap(body) {
-    let buffer = 50
+    let buffer = Math.max(body.width - body.center.x, body.height - body.center.y)
     let x = body.physics_body.position.x, y = body.physics_body.position.y
     let new_x = x, new_y = y
     if (x < 0 - buffer) {
-        new_x = canvas.width
+        new_x = canvas.width + buffer
     } else if (x > canvas.width + buffer) {
-        new_x = 0
+        new_x = 0 - buffer
     }
 
     if (y < 0 - buffer) {
-        new_y = canvas.height
+        new_y = canvas.height + buffer
     } else if (y > canvas.height + buffer) {
-        new_y = 0
+        new_y = 0 - buffer
     }
     w16.physics.Body.setPosition(body.physics_body, { 'x': new_x, 'y': new_y })
 }
@@ -58,8 +58,8 @@ class Asteroid extends Body {
         super()
         this.X = X
         this.Y = Y
-        this.width = 30
-        this.height = 30
+        this.width = 50
+        this.height = 50
         this.center = { 'x': this.width / 2, 'y': this.height / 2 }
         this.physics_body = w16.physics.Bodies.circle(this.X, this.Y, this.width / 2)
         this.physics_body.friction = 0
@@ -134,7 +134,7 @@ class Ship extends Body {
 
     controls() {
         let x = 0, y = 0
-        let thrust = 0.1
+        let thrust = 0.01
         if (w16.keyboard.up) {
             let y = -Math.cos(this.angle)
             let x = Math.sin(this.angle)
@@ -199,6 +199,7 @@ class Game {
         w16.keyboard.addBool('32', 'shoot') // spacebar
 
         // renders debug screen to right of normal game screen
+        /*
         let render = w16.physics.Render.create({
             canvas: canvas2,
             engine: w16.physics.engine,
@@ -209,7 +210,7 @@ class Game {
                 height: height
             }
         });
-        w16.physics.Render.run(render);
+        w16.physics.Render.run(render);*/
 
 
     }
