@@ -48,8 +48,6 @@ class Body {
         context.save()
         context.translate(this.X, this.Y)
         context.rotate(this.angle)
-
-
     
         if(this.numFrames != 1){
             let row = Math.floor(this.currentFrame / this.numFrames);
@@ -57,8 +55,7 @@ class Body {
             context.drawImage(w16.resources.getImage(this.image), col*this.frameWidth, row*this.frameHeight, this.frameWidth, this.frameHeight, -this.center.x, -this.center.y, this.width, this.height);
         }
         else
-            context.drawImage(w16.resources.getImage(this.image), -this.center.x, -this.center.y,//- this.center.X, - this.center.Y, 
-            this.width, this.height);
+            context.drawImage(w16.resources.getImage(this.image), -this.center.x, -this.center.y, this.width, this.height);
         context.restore()
     }
 

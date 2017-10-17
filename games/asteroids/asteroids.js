@@ -4,15 +4,15 @@
 w16 = new W16()
 
 //used with permission from the Artist: Merve Naz Yelmen
-w16.resources.addImage('Asteroid1', 'Asteroid1.png');
-w16.resources.addImage('Asteroid2', 'Asteroid2.png');
-w16.resources.addImage('Asteroid3', 'Asteroid3.png');
-w16.resources.addImage('Asteroid4', 'Asteroid4.png');
-w16.resources.addImage('Asteroid5', 'Asteroid5.png');
-w16.resources.addImage('Spaceship', 'Spaceship.png');
-w16.resources.addImage('Projectile', 'Projectile.png');
-w16.resources.addImage('Background', 'Background.png');
-w16.resources.addImage('Explosion', 'Explosion Sheet.png');
+w16.resources.addImage('Asteroid1', 'images/Asteroid1.png');
+w16.resources.addImage('Asteroid2', 'images/Asteroid2.png');
+w16.resources.addImage('Asteroid3', 'images/Asteroid3.png');
+w16.resources.addImage('Asteroid4', 'images/Asteroid4.png');
+w16.resources.addImage('Asteroid5', 'images/Asteroid5.png');
+w16.resources.addImage('Spaceship', 'images/Spaceship.png');
+w16.resources.addImage('Projectile', 'images/Projectile.png');
+w16.resources.addImage('Background', 'images/Background.png');
+w16.resources.addImage('Explosion', 'images/Explosion Sheet.png');
 
 
 w16.physics_enabled = true
@@ -20,7 +20,7 @@ w16.physics_enabled = true
 //canvas2 = document.getElementById("otherBoy");
 
 function wrap(body) {
-    let buffer = Math.max(body.width - body.center.x, body.height - body.center.y)
+    let buffer = Math.min(body.width - body.center.x, body.height - body.center.y)
     let x = body.physics_body.position.x, y = body.physics_body.position.y
     let new_x = x, new_y = y
     if (x < 0 - buffer) {
@@ -37,10 +37,33 @@ function wrap(body) {
     w16.physics.Body.setPosition(body.physics_body, { 'x': new_x, 'y': new_y })
 }
 
+function move_to_fringe(body) {
+    let buffer = Math.max(body.width - body.center.x, body.height - body.center.y)
+    let edge = Math.floor(Math.random() * (4 - 1 + 1)) + 1
+    let new_x =  Math.random() * canvas.width;
+    let new_y =  Math.random() * canvas.height;
+    switch (edge){
+        case 1:
+            new_x = 0 - buffer
+            break
+        case 2:
+            new_x = canvas.width + buffer
+            break
+        case 3:
+            new_y = 0 - buffer
+            break
+        case 4:
+            new_y = canvas.height + buffer
+            break
+    }
+    w16.physics.Body.setPosition(body.physics_body, { 'x': new_x, 'y': new_y })
+
+}
+
 class AsteroidSpawner extends Body {
     constructor() {
         super()
-        this.max_ast = 50
+        this.max_ast = 25
         this.ast_count = 0
     }
 
@@ -53,11 +76,13 @@ class AsteroidSpawner extends Body {
             let ast = new Asteroid(X, Y)
 
             let angle = Math.random() * 6.28;
-            let thrust = Math.random() * (.01 - .001) + .001;
+            let thrust = Math.random() * (.02 - .001) + .001;
             let thrust_y = -Math.cos(angle)
             let thrust_x = Math.sin(angle)
             ast.physics_body.force = { 'x': thrust * thrust_x, 'y': thrust * thrust_y }
             w16.addToWorld(ast)
+
+            move_to_fringe(ast)
         }
     }
 }
@@ -67,8 +92,7 @@ class Asteroid extends Body {
         super()
         this.X = X
         this.Y = Y
-        this.width = 50
-        this.height = 50
+        this.width = this.height = Math.random() * (75 - 40) + 40;
         this.center = { 'x': this.width / 2, 'y': this.height / 2 }
         this.physics_body = w16.physics.Bodies.circle(this.X, this.Y, this.width / 2)
         this.physics_body.friction = 0
@@ -89,7 +113,11 @@ class Asteroid extends Body {
             }
         }
         else if(this.timerActive && this.ticksRemaining == 0){
-            w16.removeFromWorld(this)
+            //w16.removeFromWorld(this)
+            move_to_fringe(this)
+            this.image = 'Asteroid' + (Math.floor(Math.random()*5)+1)
+            this.timerActive = false
+            this.numFrames = 1
         }
     }
 
@@ -159,7 +187,7 @@ class Ship extends Body {
 
     controls() {
         let x = 0, y = 0
-        let thrust = 0.01
+        let thrust = 0.0025
         if (w16.keyboard.up) {
             let y = -Math.cos(this.angle)
             let x = Math.sin(this.angle)
@@ -167,7 +195,11 @@ class Ship extends Body {
         }
 
         if (w16.keyboard.shoot) {
-            this.shoot()
+            if (this.able_to_shoot)
+                this.shoot()
+            this.able_to_shoot = false
+        } else {
+            this.able_to_shoot = true
         }
 
         if (w16.keyboard.left) {
@@ -200,8 +232,8 @@ class Game {
         let ship = new Ship();
         ship.X = canvas.width / 2
         ship.Y = canvas.height / 2
-        ship.width = 100
-        ship.height = 100
+        ship.width = 50
+        ship.height = 50
         ship.center = { 'x': ship.width / 2, 'y': ship.height / 2 }
         ship.physics_body = w16.physics.Bodies.rectangle(ship.X, ship.Y, ship.width, ship.height)
         ship.image = 'Spaceship'
@@ -225,20 +257,6 @@ class Game {
 
         w16.keyboard.addBool('69', 'shoot') // e key
         w16.keyboard.addBool('32', 'shoot') // spacebar
-
-        // renders debug screen to right of normal game screen
-        /*
-        let render = w16.physics.Render.create({
-            canvas: canvas2,
-            engine: w16.physics.engine,
-            options: {
-                wireframes: false,
-                background: 'transparent',
-                width: width,
-                height: height
-            }
-        });
-        w16.physics.Render.run(render);*/
 
 
     }
