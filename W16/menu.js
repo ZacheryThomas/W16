@@ -9,6 +9,12 @@ class menuText extends Body {
         this.Z = Number.MAX_SAFE_INTEGER
         this.tick = 0
         this.text = ''
+        this.X;
+        this.Y;
+    }
+
+    getUpperLeftCorner() {
+        return {X: this.X - this.width/2, Y: this.Y - this.height/2};
     }
 
     getCount(){
@@ -28,7 +34,10 @@ class menuText extends Body {
     draw(context){
         context.font = '50pt Calibri'
         context.fillStyle = 'black'
-        context.fillText(this.text, 100, 100);
+        this.width = context.measureText(this.text).width
+        this.height = context.measureText(this.text).height
+
+        context.fillText(this.text, this.getUpperLeftCorner().X, this.getUpperLeftCorner().Y);
     }
 }
 
@@ -52,7 +61,11 @@ class menuBackground extends Body {
 let single = new menuText()
 let multi = new menuText()
 single.text = 'Single Player'
+single.X = width/2
+single.y = height/3
 multi.text = 'Multi Player'
+multi.X = width/2
+multi.y = 2*height/3
 
 let back = new menuBackground()
 
@@ -62,12 +75,14 @@ class Menu {
     }
 
     start(){
-        w16.addToWorld(text)
+        w16.addToWorld(single)
+        w16.addToWorld(multi)
         w16.addToWorld(back)
     }
 
     end(){
-        w16.removeFromWorld(text)
+        w16.removeFromWorld(single)
+        w16.removeFromWorld(multi)
         w16.removeFromWorld(back)
     }
 }
