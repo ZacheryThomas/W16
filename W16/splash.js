@@ -49,17 +49,17 @@ class splashBackground extends Body {
 let text = new splashText()
 let back = new splashBackground()
 
-class Splash {
+class Splash extends State{
     constructor(){
-        
+        super()
     }
 
-    start(){
+    startState(){
         w16.addToWorld(text)
         w16.addToWorld(back)
     }
 
-    end(){
+    endState(){
         w16.removeFromWorld(text)
         w16.removeFromWorld(back)
     }

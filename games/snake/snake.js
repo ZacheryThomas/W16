@@ -217,19 +217,19 @@ class Snake extends Body {
     }
 }
 
-class Game {
+class Game extends State{
 
     constructor() {
+        super()
 
         this.highlightSelected = true;
 
-        this.init()
+        w16.stateMan.addState('game', this)
+
+        w16.run(15)
     }
 
-    init() {
-        w16.run(15) // start engine at 15 ticks per second
-
-        //w16.stop() to stop
+    startState() {
 
         let head = new Snake()
         head.X = 40

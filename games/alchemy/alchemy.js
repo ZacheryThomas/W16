@@ -239,17 +239,19 @@ class Card extends Body{
     }
 }
 
-class Game{
+class Game extends State{
 
     constructor(){
+        super()
         
         this.highlightSelected = true;
 
-        this.init()
+        w16.stateMan.addState('game', this)
+
+        w16.run(30)
     }
 
-    init(){
-        w16.run(30) // start engine at 30 ticks per sec
+    startState(){
 
         var card = new Card()
         card.X = 0

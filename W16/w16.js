@@ -13,6 +13,10 @@ class W16 {
         this.resources = new Resources()
         this.splash = new Splash()
         this.physics = new Physics()
+        this.stateMan = new StateManager()
+
+        this.stateMan.addState('loading', this.splash)
+
         this.physics_enabled = false
         this.intervalID = undefined
         this.prevUpdateMS = Date.now()
@@ -28,27 +32,29 @@ class W16 {
      * Starts game update / drawing
      */
     run(ticks) {
-        this.resources.loadImages()
-        this.splash.start()
         if (this.intervalID == undefined) {
-            self = this
+            this.resources.loadImages()
+            
+            // change state to loading
+            this.stateMan.changeState('loading')
             this.loading = true
+
+            self = this
+
             let miliSecInterval = 1000 / ticks
             self.intervalID = setInterval(function () {
                 if (self.resources.imagesLoaded()) {
+
+                    // if done loading, change state to game
                     if (self.loading) {
-                        self.splash.end()
+                        self.stateMan.changeState('game')
                         self.loading = false
                     }
-                    self.update();
+                    self.update()
                 }
                 self.draw();
             }, miliSecInterval);
         }
-    }
-
-    broadcastTicks() {
-
     }
 
     /**
@@ -101,16 +107,16 @@ class W16 {
         canvas.width = canvas.width;
 
         // Draw a background if there is one
-        if(this.background)
+        if (this.background)
             context.drawImage(this.resources.getImage('Background'), 0, 0)
 
         // Display score if set
-        if(this.score>-1){
+        if (this.score > -1) {
             context.font = "20px Helvetica";
             context.fillStyle = this.score_color;
             context.fillText("Current Score: " + this.score, 70, 20);
-            if(this.high_score>-1)
-                context.fillText("High Score: " + this.high_score, canvas.width-200, 20);
+            if (this.high_score > -1)
+                context.fillText("High Score: " + this.high_score, canvas.width - 200, 20);
             if (this.game_over) {
                 context.font = "40px Helvetica"
                 context.fillText("Game Over", 200, 200);
@@ -151,7 +157,7 @@ class W16 {
 
     updateScore(number) {
         this.score += number;
-        this.high_score <= this.score ? this.high_score = this.score: this.high_score = this.high_score;
+        this.high_score <= this.score ? this.high_score = this.score : this.high_score = this.high_score;
     }
 
 

@@ -98,6 +98,7 @@ class Asteroid extends Body {
         this.physics_body.friction = 0
         this.physics_body.frictionAir = 0
         this.image = 'Asteroid' + (Math.floor(Math.random()*5)+1)
+        this.name = 'Asteroid'
     }
 
 
@@ -176,6 +177,7 @@ class Ship extends Body {
     }
 
     update() {
+        Body.prototype.update.call(this)
         this.controls()
         wrap(this)
     }
@@ -214,21 +216,21 @@ class Ship extends Body {
     }
 }
 
-
-class Game {
+class Game extends State{
 
     constructor() {
-        this.init()
-    }
+        super()
+        w16.stateMan.addState('game', this)
 
-    init() {
         w16.run(60) // start engine at 30 ticks per sec
         w16.physics_enabled = true
         w16.physics.gravity(0, 0)
         w16.background = true
         w16.updateScore(1);
         w16.score_color = 'white'
+    }
 
+    startState() {
         let ship = new Ship();
         ship.X = canvas.width / 2
         ship.Y = canvas.height / 2
