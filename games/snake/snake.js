@@ -72,7 +72,7 @@ class Snake extends Body {
         this.score = 0;
         this.gameOver = false;
 
-        this.controller = undefined;
+        this.controller = new Controller();
 
         this.child = undefined
         this.tail = this
@@ -179,25 +179,25 @@ class Snake extends Body {
     }
 
     changeDirection() {
-        if (this.controller.up) {
+        if (this.controller.up()) {
             if (this.lastDirection.Y != 1) {
                 this.direction.Y = -1;
                 this.direction.X = 0;
             }
         }
-        if (this.controller.down) {
+        if (this.controller.down()) {
             if (this.lastDirection.Y != -1) {
                 this.direction.Y = 1;
                 this.direction.X = 0;
             }
         }
-        if (this.controller.left) {
+        if (this.controller.left()) {
             if (this.lastDirection.X != 1) {
                 this.direction.Y = 0;
                 this.direction.X = -1;
             }
         }
-        if (this.controller.right) {
+        if (this.controller.right()) {
             if (this.lastDirection.X != -1) {
                 this.direction.Y = 0;
                 this.direction.X = 1;
@@ -242,7 +242,21 @@ class Game extends State{
         head.name = 'head'
         head.image = 'snake'
         head.direction.X = 1;
-        head.controller = w16.keyboard;
+        head.controller = new Controller()
+
+        // keyboard controls
+        head.controller.addKey('87', 'w') // w key
+        head.controller.addKey('38', 'up') // up arrow
+
+        head.controller.addKey('65', 'a') // a key
+        head.controller.addKey('37', 'left') // left arrow
+
+        head.controller.addKey('83', 's') // s key
+        head.controller.addKey('40', 'down') // down arrow
+
+        head.controller.addKey('68', 'd') // d key
+        head.controller.addKey('39', 'right') // right arrow
+
 
         let food = new Food(false);
         food.X = Math.floor(Math.random() * (global_canvas_width / 20)) * 20;
@@ -259,21 +273,6 @@ class Game extends State{
         badfood.height = global_sprite_height
         badfood.name = 'food'
         badfood.image = 'bad food'
-
-        // keyboard controls
-        w16.keyboard.addBool('87', 'w') // w key
-        w16.keyboard.addBool('38', 'up') // up arrow
-
-        w16.keyboard.addBool('65', 'a') // a key
-        w16.keyboard.addBool('37', 'left') // left arrow
-
-        w16.keyboard.addBool('83', 's') // s key
-        w16.keyboard.addBool('40', 'down') // down arrow
-
-        w16.keyboard.addBool('68', 'd') // d key
-        w16.keyboard.addBool('39', 'right') // right arrow
-
-        
 
         w16.addToWorld(head)
         w16.addToWorld(food)
