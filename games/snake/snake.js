@@ -282,6 +282,22 @@ class Game extends State{
 
 }
 
+function populateButtons(){
+    let single = new Button()
+    let multi = new Button()
+
+    w16.menu.mouse = w16.mouse
+
+    single.text = 'Single Player'
+    single.X = width/2
+    single.y = height/3
+
+
+    multi.text = 'Multi Player'
+    multi.X = width/2
+    multi.y = 2*height/3
+}
+
 
 document.getElementById('whyupdate').onclick = function(){
     w16.stop();

@@ -12,9 +12,11 @@ class W16 {
         this.keyboard = new Keyboard()
         this.resources = new Resources()
         this.splash = new Splash()
+        this.menu = new Menu()
         this.physics = new Physics()
         this.stateMan = new StateManager()
 
+        this.stateMan.addState('menu', this.menu)
         this.stateMan.addState('loading', this.splash)
 
         this.physics_enabled = false
