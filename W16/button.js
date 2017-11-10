@@ -8,17 +8,20 @@ class Button extends Body {
         this.text = ''
         this.X;
         this.Y;
+        this.centerX;
+        this.centerY;
         this.onClick = function() {}
     }
 
     update() {
-        if(w16.mouse.onBody(this)){
+        if (w16.mouse.downEvent && w16.mouse.onBody(this)){
             this.onClick();
         }
     }
 
     getUpperLeftCorner() {
-        return {X: this.X - this.width/2, Y: this.Y - this.height/2};
+        this.X = this.centerX - this.width/2, 
+        this.Y = this.centerY - this.height/2
     }
 
 
@@ -28,8 +31,8 @@ class Button extends Body {
         this.width = context.measureText(this.text).width
         this.height = 50
 
-        let corner = this.getUpperLeftCorner()
-        
-        context.fillText(this.text, this.getUpperLeftCorner().X, this.getUpperLeftCorner().Y);
+        this.getUpperLeftCorner()    
+
+        context.fillText(this.text, this.X, this.Y+this.height);
     }
 }

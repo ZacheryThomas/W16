@@ -133,7 +133,7 @@ class Snake extends Body {
      * @param {*} overlaps 
      */
     handleCollisions(body) {
-        if (body instanceof Segment){
+        if (body instanceof Segment || body instanceof Snake){
             this.endGame();
         }
         else if (body.bad){
@@ -180,6 +180,7 @@ class Snake extends Body {
     endGame() {
         w16.stop();
         this.gameOver = true;
+        w16.game_over = true;
     }
 
     changeDirection() {
@@ -268,7 +269,7 @@ class Game extends State{
             head2.height = global_sprite_height
             head2.name = 'head'
             head2.image = 'snake'
-            head2.direction.X = 3;
+            head2.direction.X = -1;
             head2.controller = new Controller()
 
             head2.controller.addKey('87', 'w', 'up') // w key
@@ -310,7 +311,7 @@ class Game extends State{
 
 }
 
-function populateButtons(){
+function mainMenu(){
     let single = new Button()
     let multi = new Button()
     
@@ -319,8 +320,8 @@ function populateButtons(){
     w16.stateMan.addState('game', game)
 
     single.text = 'Single Player'
-    single.X = width/2
-    single.Y = height/3
+    single.centerX = width/2
+    single.centerY = height/3
     single.onClick = function() {
         single_player = true
         multi_player = false
@@ -330,8 +331,8 @@ function populateButtons(){
 
 
     multi.text = 'Local Multiplayer'
-    multi.X = width/2
-    multi.Y = 2*height/3
+    multi.centerX = width/2
+    multi.centerY = 2*height/3
     multi.onClick = function() {
         single_player = false
         multi_player = true
@@ -344,9 +345,13 @@ function populateButtons(){
      w16.run(15)
 }
 
-populateButtons()
+mainMenu()
 
 document.getElementById('whyupdate').onclick = function(){
-    w16.stop();
-    w16.clearWorld();
+    if(w16.game_over){
+        w16.stop();
+        w16.clearWorld();
+        w16.menu_active = true;
+        mainMenu()
+    }
 }
