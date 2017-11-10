@@ -1,16 +1,20 @@
-let width = canvas.width
-let height = canvas.height
-
 class Button extends Body {
     constructor(){
         super()
-        this.width = width
-        this.height = height
+        this.width
+        this.height
         this.Z = Number.MAX_SAFE_INTEGER
         this.tick = 0
         this.text = ''
         this.X;
         this.Y;
+        this.onClick = function() {}
+    }
+
+    update() {
+        if(w16.mouse.onBody(this)){
+            this.onClick();
+        }
     }
 
     getUpperLeftCorner() {
@@ -28,9 +32,11 @@ class Button extends Body {
         context.font = '50pt Calibri'
         context.fillStyle = 'black'
         this.width = context.measureText(this.text).width
-        this.height = context.measureText(this.text).height
+        this.height = 50
 
-        context.rect(this.getUpperLeftCorner.X, this.getUpperLeftCorner.Y,this.width,this.height);
+        let corner = this.getUpperLeftCorner()
+
+        context.rect(this.getUpperLeftCorner().X, this.getUpperLeftCorner().Y,this.width,this.height);
         context.fillText(this.text, this.getUpperLeftCorner().X, this.getUpperLeftCorner().Y);
     }
 }

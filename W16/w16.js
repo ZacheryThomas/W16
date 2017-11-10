@@ -28,6 +28,7 @@ class W16 {
         this.game_over = false
         this.tickReceivers = []
         this.score_color = 'black';
+        this.menu_active = false;
     }
 
     /**
@@ -46,9 +47,11 @@ class W16 {
             let miliSecInterval = 1000 / ticks
             self.intervalID = setInterval(function () {
                 if (self.resources.imagesLoaded()) {
-
+                    if (self.menu_active) {
+                        self.stateMan.changeState('menu')
+                    }
                     // if done loading, change state to game
-                    if (self.loading) {
+                    if (self.loading && !self.menu_active ) {
                         self.stateMan.changeState('game')
                         self.loading = false
                     }

@@ -2,6 +2,8 @@
 
 w16 = new W16()
 
+w16.menu_active = true;
+
 w16.resources.addImage('snake', 'https://upload.wikimedia.org/wikipedia/commons/6/68/Solid_black.png');
 w16.resources.addImage('good food', 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Solid_green.svg/512px-Solid_green.svg.png');
 w16.resources.addImage('bad food', 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Red.svg/512px-Red.svg.png');
@@ -11,6 +13,8 @@ global_sprite_width = 20;
 global_sprite_height = 20;
 global_canvas_height = document.getElementById("whyupdate").height;
 global_canvas_width = document.getElementById("whyupdate").width;
+single_player = false;
+multi_player = false;
 
 var high_score = 0;
 
@@ -225,10 +229,6 @@ class Game extends State{
         super()
 
         this.highlightSelected = true;
-
-        w16.stateMan.addState('game', this)
-
-        w16.run(15)
     }
 
     startState() {
@@ -244,18 +244,47 @@ class Game extends State{
         head.direction.X = 1;
         head.controller = new Controller()
 
-        // keyboard controls
-        head.controller.addKey('87', 'w') // w key
-        head.controller.addKey('38', 'up') // up arrow
+        if(single_player){
+            // keyboard controls
+            head.controller.addKey('87', 'w', 'up') // w key
+            head.controller.addKey('38', 'up', 'up') // up arrow
 
-        head.controller.addKey('65', 'a') // a key
-        head.controller.addKey('37', 'left') // left arrow
+            head.controller.addKey('65', 'a', 'left') // a key
+            head.controller.addKey('37', 'left', 'left') // left arrow
 
-        head.controller.addKey('83', 's') // s key
-        head.controller.addKey('40', 'down') // down arrow
+            head.controller.addKey('83', 's', 'down') // s key
+            head.controller.addKey('40', 'down', 'down') // down arrow
 
-        head.controller.addKey('68', 'd') // d key
-        head.controller.addKey('39', 'right') // right arrow
+            head.controller.addKey('68', 'd', 'right') // d key
+            head.controller.addKey('39', 'right', 'right') // right arrow
+        }
+
+        if(multi_player) {
+            let head2 = new Snake()
+            head2.X = width - 40
+            head2.Y = height - 40
+            head2.Z = 1
+            head2.width = global_sprite_width
+            head2.height = global_sprite_height
+            head2.name = 'head'
+            head2.image = 'snake'
+            head2.direction.X = 1;
+            head2.controller = new Controller()
+
+            head2.controller.addKey('87', 'w', 'up') // w key
+            head.controller.addKey('38', 'up', 'up') // up arrow
+
+            head2.controller.addKey('65', 'a', 'left') // a key
+            head.controller.addKey('37', 'left', 'left') // left arrow
+
+            head2.controller.addKey('83', 's', 'down') // s key
+            head.controller.addKey('40', 'down', 'down') // down arrow
+
+            head2.controller.addKey('68', 'd', 'right') // d key
+            head.controller.addKey('39', 'right', 'right') // right arrow
+
+            w16.addToWorld(head2)
+        }
 
 
         let food = new Food(false);
@@ -284,22 +313,41 @@ class Game extends State{
 function populateButtons(){
     let single = new Button()
     let multi = new Button()
-
-    w16.menu.mouse = w16.mouse
+    
+    w16.stateMan.addState('game', this)
 
     single.text = 'Single Player'
+    single.width = 
     single.X = width/2
     single.y = height/3
+    single.onClick = function() {
+        single_player = true
+        multi_player = false
+        w16.clearWorld();
+        w16.menu_active = false;
+        game = new Game()
+     }
 
 
-    multi.text = 'Multi Player'
+    multi.text = 'Local Multiplayer'
     multi.X = width/2
     multi.y = 2*height/3
+    multi.onClick = function() {
+        single_player = false
+        multi_player = true
+        w16.clearWorld();
+        w16.menu_active = false;
+        game = new Game()
+     }
+     w16.menu.buttons.push(single)
+     w16.menu.buttons.push(multi)
+
+     w16.run(15)
 }
 
+populateButtons()
 
 document.getElementById('whyupdate').onclick = function(){
     w16.stop();
     w16.clearWorld();
-    game = new Game()
 }

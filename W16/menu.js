@@ -1,6 +1,3 @@
-let width = canvas.width
-let height = canvas.height
-
 class menuBackground extends Body {
     constructor(){
         super()
@@ -16,23 +13,23 @@ class menuBackground extends Body {
     }
 }
 
-let back = new menuBackground()
+let menuBack = new menuBackground()
 
-class Menu {
+class Menu extends State{
     constructor(){
+        super()
         this.buttons = []
-        this.mouse = undefined
     }
 
-    start(){
-        for (let button of buttons)
-            w16.addToWorld(buttons)
-        w16.addToWorld(back)
+    startState(){
+        for (let button of this.buttons)
+            w16.addToWorld(button)
+        //w16.addToWorld(menuBackground)
     }
 
-    end(){
-        for (let button of buttons)
-            w16.removeFromWorld(buttons)
-        w16.removeFromWorld(back)
+    endState(){
+        for (let button of this.buttons)
+            w16.removeFromWorld(button)
+        //w16.removeFromWorld(menuBackground)
     }
 }
