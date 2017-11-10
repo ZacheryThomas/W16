@@ -268,7 +268,7 @@ class Game extends State{
             head2.height = global_sprite_height
             head2.name = 'head'
             head2.image = 'snake'
-            head2.direction.X = 1;
+            head2.direction.X = 3;
             head2.controller = new Controller()
 
             head2.controller.addKey('87', 'w', 'up') // w key
@@ -314,30 +314,29 @@ function populateButtons(){
     let single = new Button()
     let multi = new Button()
     
-    w16.stateMan.addState('game', this)
+    game = new Game()
+
+    w16.stateMan.addState('game', game)
 
     single.text = 'Single Player'
-    single.width = 
     single.X = width/2
-    single.y = height/3
+    single.Y = height/3
     single.onClick = function() {
         single_player = true
         multi_player = false
         w16.clearWorld();
         w16.menu_active = false;
-        game = new Game()
      }
 
 
     multi.text = 'Local Multiplayer'
     multi.X = width/2
-    multi.y = 2*height/3
+    multi.Y = 2*height/3
     multi.onClick = function() {
         single_player = false
         multi_player = true
         w16.clearWorld();
         w16.menu_active = false;
-        game = new Game()
      }
      w16.menu.buttons.push(single)
      w16.menu.buttons.push(multi)
