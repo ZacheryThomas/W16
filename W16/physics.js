@@ -64,7 +64,7 @@ class Physics {
      * ex x=0, y=1 is normal gravity
      * x=1, y=0 normal gravity force to right
      * @param {*} x 
-     * @param {*} y 
+     * @param {*} y
      */
     gravity(x, y) {
         this.engine.world.gravity.x = x

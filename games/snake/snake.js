@@ -53,8 +53,8 @@ class Segment extends Body {
         this.child = undefined
     }
 
-    move(X, Y){
-        if (this.child != undefined){
+    move(X, Y) {
+        if (this.child != undefined) {
             this.child.move(this.X, this.Y)
         }
         this.X = X;
@@ -72,7 +72,7 @@ class Snake extends Body {
         this.ticks = 5;
         this.direction = { X: 0, Y: 0 };
         this.lastDirection = { X: 0, Y: 0 };
-        this.lastLoc = { X:0, Y: 0 };
+        this.lastLoc = { X: 0, Y: 0 };
         this.score = 0;
         this.gameOver = false;
 
@@ -100,7 +100,7 @@ class Snake extends Body {
 
         if (this.detectEdgeMove())
             this.endGame();
-        
+
         let overlaps = this.overlaps()
         if (overlaps.length > 0) {
             for (var collision of overlaps) {
@@ -111,14 +111,14 @@ class Snake extends Body {
         this.moveSnake();
 
         this.updateCurrentScore();
-        
+
     }
 
     updateCurrentScore() {
         this.score = 0
         var seg = this.child
 
-        while(seg != undefined){
+        while (seg != undefined) {
             this.score += 1
             seg = seg.child
         }
@@ -133,13 +133,13 @@ class Snake extends Body {
      * @param {*} overlaps 
      */
     handleCollisions(body) {
-        if (body instanceof Segment || body instanceof Snake){
+        if (body instanceof Segment || body instanceof Snake) {
             this.endGame();
         }
-        else if (body.bad){
+        else if (body.bad) {
             this.shrinkSnake()
         }
-        else if (body.name == 'food'){
+        else if (body.name == 'food') {
             body.X = Math.floor(Math.random() * (global_canvas_width / 20)) * 20;
             body.Y = Math.floor(Math.random() * (global_canvas_height / 20)) * 20;
             this.growSnake();
@@ -148,10 +148,10 @@ class Snake extends Body {
 
     shrinkSnake() {
         var seg = this
-        while(seg.child.child != undefined){
+        while (seg.child.child != undefined) {
             seg = seg.child
         }
-        w16.removeFromWorld(this.tail)   
+        w16.removeFromWorld(this.tail)
         this.tail = seg
         this.tail.child = undefined
     }
@@ -224,7 +224,7 @@ class Snake extends Body {
     }
 }
 
-class Game extends State{
+class Game extends State {
 
     constructor() {
         super()
@@ -245,7 +245,7 @@ class Game extends State{
         head.direction.X = 1;
         head.controller = new Controller()
 
-        if(single_player){
+        if (single_player) {
             // keyboard controls
             head.controller.addKey('87', 'w', 'up') // w key
             head.controller.addKey('38', 'up', 'up') // up arrow
@@ -260,7 +260,7 @@ class Game extends State{
             head.controller.addKey('39', 'right', 'right') // right arrow
         }
 
-        if(multi_player) {
+        if (multi_player) {
             let head2 = new Snake()
             head2.X = width - 40
             head2.Y = height - 40
@@ -311,44 +311,44 @@ class Game extends State{
 
 }
 
-function mainMenu(){
+function mainMenu() {
     let single = new Button()
     let multi = new Button()
-    
+
     game = new Game()
 
     w16.stateMan.addState('game', game)
 
     single.text = 'Single Player'
-    single.centerX = width/2
-    single.centerY = height/3
-    single.onClick = function() {
+    single.centerX = width / 2
+    single.centerY = height / 3
+    single.onClick = function () {
         single_player = true
         multi_player = false
         w16.clearWorld();
         w16.menu_active = false;
-     }
+    }
 
 
     multi.text = 'Local Multiplayer'
-    multi.centerX = width/2
-    multi.centerY = 2*height/3
-    multi.onClick = function() {
+    multi.centerX = width / 2
+    multi.centerY = 2 * height / 3
+    multi.onClick = function () {
         single_player = false
         multi_player = true
         w16.clearWorld();
         w16.menu_active = false;
-     }
-     w16.menu.buttons.push(single)
-     w16.menu.buttons.push(multi)
+    }
+    w16.menu.buttons.push(single)
+    w16.menu.buttons.push(multi)
 
-     w16.run(15)
+    w16.run(15)
 }
 
 mainMenu()
 
-document.getElementById('whyupdate').onclick = function(){
-    if(w16.game_over){
+document.getElementById('whyupdate').onclick = function () {
+    if (w16.game_over) {
         w16.stop();
         w16.clearWorld();
         w16.menu_active = true;

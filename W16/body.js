@@ -27,14 +27,14 @@ class Body {
      * Overwrite this to do stuff
      */
     update() {
-        if(this.numFrames != 1){
-            if(this.frameCounter == (this.frameSpeed-1)){
+        if (this.numFrames != 1) {
+            if (this.frameCounter == (this.frameSpeed - 1)) {
                 this.currentFrame = (this.currentFrame + 1) % this.endFrame
             }
             this.frameCounter = (this.frameCounter + 1) % this.frameSpeed
         }
 
-        if(this.timerActive){
+        if (this.timerActive) {
             this.ticksRemaining = this.ticksRemaining - 1
         }
     }
@@ -48,11 +48,11 @@ class Body {
         context.save()
         context.translate(this.X, this.Y)
         context.rotate(this.angle)
-    
-        if(this.numFrames != 1){
+
+        if (this.numFrames != 1) {
             let row = Math.floor(this.currentFrame / this.numFrames);
             let col = Math.floor(this.currentFrame % this.numFrames);
-            context.drawImage(w16.resources.getImage(this.image), col*this.frameWidth, row*this.frameHeight, this.frameWidth, this.frameHeight, -this.center.x, -this.center.y, this.width, this.height);
+            context.drawImage(w16.resources.getImage(this.image), col * this.frameWidth, row * this.frameHeight, this.frameWidth, this.frameHeight, -this.center.x, -this.center.y, this.width, this.height);
         }
         else
             context.drawImage(w16.resources.getImage(this.image), -this.center.x, -this.center.y, this.width, this.height);
