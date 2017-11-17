@@ -16,9 +16,12 @@ class W16 {
         this.physics = new Physics()
         this.stateMan = new StateManager()
         this.networking = new Networking()
+        this.connecting = new Splash()
+        this.connecting.text.text = 'Connecting '
 
         this.stateMan.addState('menu', this.menu)
         this.stateMan.addState('loading', this.splash)
+        this.stateMan.addState('connecting', this.connecting)
 
         this.physics_enabled = false
         this.intervalID = undefined
@@ -147,7 +150,8 @@ class W16 {
 
     addToWorld(body) {
         let engine = this
-        body.overlaps = function () { return engine.checkOverlaps(body) }
+        if (body.collidable)
+            body.overlaps = function () { return engine.checkOverlaps(body) }
         if (body.physics_body) {
             body.phys_collisions = function () { return engine.physics.colliding_with(body) }
         }

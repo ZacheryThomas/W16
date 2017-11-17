@@ -1,12 +1,18 @@
 <!-- By: Alex Card and Zachery Thomas-->
-<div>Use the arrow keys to control the snake. Click inside the gray border to start a new game.</div>
+<div>Use the arrow keys to control the snake. Click inside the gray border to start a new game.
+    <br>
+    To play a game of local multiplayer snake, one player controls their snake using the arrow keys, and the other via WASD, where W is up, A is left, S is down, and D is right.
+    <br>
+    To play a game of online multiplayer snake, one player must be the host and the other the client. 
+    The host must provide the client with their ID, which the client must enter into the text box before clicking join online multiplayer.
+</div>
 <canvas id="whyupdate" width="600" height="400" style="border: 20px solid gray;">
     Canvas not supported
 </canvas>
 <br>
 <textbox id="playerID"></textbox>
 <br>
-<textbox>Enter Host ID:</textbox> </textbox><input type="text" id="partnerID" placeholder='host id'/>
+<textbox>Enter Host ID:</textbox> </textbox><input type="text" id="hostID" placeholder='host id'/>
 
 <script src="../../W16/matter.min.js"></script>
 <script src="../../W16/physics.js"></script>

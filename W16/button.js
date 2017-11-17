@@ -26,10 +26,10 @@ class Button extends Body {
 
 
     draw(context){
-        context.font = '50pt Calibri'
+        context.font = '40pt Calibri'
         context.fillStyle = 'black'
         this.width = context.measureText(this.text).width
-        this.height = 50
+        this.height = 40
 
         this.getUpperLeftCorner()    
 

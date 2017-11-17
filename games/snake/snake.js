@@ -409,9 +409,13 @@ class Game extends State {
 }
 
 function mainMenu() { 
+    if(w16.stateMan.name != 'menu')
+        w16.stateMan.changeState('menu')
+    
     let single = new Button()
     let multiLocal = new Button()
-    let multiNetworked = new Button()
+    let multiNetworkedHost = new Button()
+    let multiNetworkedClient = new Button()
 
     game = new Game()
 
@@ -438,34 +442,80 @@ function mainMenu() {
         w16.stateMan.changeState('game')
     }
 
-    multiNetworked.text = 'Online Multiplayer'
-    multiNetworked.centerX = width / 2
-    multiNetworked.centerY = 2 * height / 3
-    multiNetworked.onClick = function () {
+    multiNetworkedHost.text = 'Host Online Multiplayer'
+    multiNetworkedHost.centerX = width / 2
+    multiNetworkedHost.centerY = 2 * height / 3
+    multiNetworkedHost.onClick = function () {
         game_mode = 'net'
-        w16.networking.sendData('START')
-        w16.clearWorld();
-        w16.menu_active = false;
-        connection_initiator = true
-        w16.stateMan.changeState('game')
+        connection_initiator = true  
+        w16.stateMan.changeState('connecting')
+        var connection = new Body()
+        connection.draw = function () { }
+        connection.update = function() {        
+            if(!(w16.networking.conn === undefined) && w16.networking.conn.open){
+                w16.networking.sendData('START')     
+                w16.menu_active = false;
+                w16.clearWorld();
+                w16.stateMan.changeState('game')
+            }   
+        }
+        w16.addToWorld(connection)
+    }
+
+    multiNetworkedClient.text = 'Join Online Multiplayer'
+    multiNetworkedClient.centerX = width / 2
+    multiNetworkedClient.centerY = 7 * height / 8
+    multiNetworkedClient.onClick = function () {
+        game_mode = 'net'
+        connection_initiator = false
+        w16.stateMan.changeState('connecting')
+        w16.networking.connectToPeer(document.getElementById('hostID').value)
+        var connection = new Body()
+        connection.draw = function () { }
+        connection.ticksRemaining = 20
+        connection.update = function() {        
+            if(connection.ticksRemaining-- >0 && !(w16.networking.conn === undefined) && w16.networking.conn.open){
+                w16.menu_active = false;
+                w16.clearWorld();
+                w16.stateMan.changeState('game')
+            }   
+            else if (connection.ticksRemaining <= 0){
+                alert('Connection timed out.')
+                w16.clearWorld();
+                mainMenu();
+            }
+        }
+        w16.addToWorld(connection)
     }
 
     w16.menu.buttons.push(single)
     w16.menu.buttons.push(multiLocal)
-    w16.menu.buttons.push(multiNetworked)
+    w16.menu.buttons.push(multiNetworkedClient)
+    w16.menu.buttons.push(multiNetworkedHost)
 
     netListner = new Body()
     netListner.draw = function () { }
     netListner.update = function () {
         let buff = w16.networking.getBuffer()
         document.getElementById('playerID').textContent = 'Your ID is : ' + w16.networking.getId()
-        if ('START' == buff[buff.length - 1]) {
-            game_mode = 'net'
-            connection_initiator = false
-            w16.stateMan.changeState('game')
-        }
     }
     w16.menu.buttons.push(netListner)
+
+}
+
+function setMenuConnecting(){
+    w16.menu.endState()
+
+    let connecting = new Button()
+    w16.menu.buttons = []
+
+    connecting.text = 'Connecting...'
+    connecting.centerX = width / 2
+    connecting.centerY = height / 2
+
+    w16.menu.buttons.push(connecting)
+
+    w16.menu.startState()
 }
 
 mainMenu()

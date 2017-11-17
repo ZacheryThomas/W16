@@ -8,6 +8,8 @@ class splashText extends Body {
         this.height = height
         this.Z = Number.MAX_SAFE_INTEGER
         this.tick = 0
+        this.text = 'Loading '
+        this.collidable = false
     }
 
     getCount(){
@@ -27,7 +29,7 @@ class splashText extends Body {
     draw(context){
         context.font = '50pt Calibri'
         context.fillStyle = 'black'
-        context.fillText('Loading ' + this.elipse(), 100, 100);
+        context.fillText(this.text + this.elipse(), 100, 100);
     }
 }
 
@@ -46,21 +48,20 @@ class splashBackground extends Body {
     }
 }
 
-let text = new splashText()
-let back = new splashBackground()
-
 class Splash extends State{
     constructor(){
         super()
+        this.text = new splashText()
+        this.back = new splashBackground()
     }
 
     startState(){
-        w16.addToWorld(text)
-        w16.addToWorld(back)
+        w16.addToWorld(this.text)
+        w16.addToWorld(this.back)
     }
 
     endState(){
-        w16.removeFromWorld(text)
-        w16.removeFromWorld(back)
+        w16.removeFromWorld(this.text)
+        w16.removeFromWorld(this.back)
     }
 }

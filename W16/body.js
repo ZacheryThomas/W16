@@ -20,6 +20,7 @@ class Body {
         this.frameCounter = 0
         this.timerActive = false
         this.ticksRemaining = 0
+        this.collidable = true
     }
 
 
