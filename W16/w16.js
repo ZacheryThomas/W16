@@ -15,6 +15,7 @@ class W16 {
         this.menu = new Menu()
         this.physics = new Physics()
         this.stateMan = new StateManager()
+        this.networking = new Networking()
 
         this.stateMan.addState('menu', this.menu)
         this.stateMan.addState('loading', this.splash)
@@ -47,12 +48,13 @@ class W16 {
             let miliSecInterval = 1000 / ticks
             self.intervalID = setInterval(function () {
                 if (self.resources.imagesLoaded()) {
-                    if (self.menu_active) {
-                        self.stateMan.changeState('menu')
-                    }
-                    // if done loading, change state to game
-                    if (self.loading && !self.menu_active ) {
-                        self.stateMan.changeState('game')
+                    // if done loading, change state to menu or game
+                    if (self.loading) {
+                        if(self.menu_active){
+                            self.stateMan.changeState('menu')
+                        }else{
+                            self.stateMan.changeState('game')
+                        }
                         self.loading = false
                     }
                     self.update()
@@ -98,6 +100,9 @@ class W16 {
 
         // clear keyboard bools
         this.keyboard.reset()
+
+        // clear out networking buffer
+        this.networking.resetBuffer()
 
         this.prevUpdateMS = updateTime
     }

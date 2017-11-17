@@ -13,8 +13,11 @@ global_sprite_width = 20;
 global_sprite_height = 20;
 global_canvas_height = document.getElementById("whyupdate").height;
 global_canvas_width = document.getElementById("whyupdate").width;
-single_player = false;
-multi_player = false;
+
+game_mode = 'single'
+
+// Initiator or reciever in network connection
+connection_initiator = false
 
 var high_score = 0;
 
@@ -235,17 +238,34 @@ class Game extends State {
     startState() {
 
         let head = new Snake()
-        head.X = 40
-        head.Y = 40
-        head.Z = 1
         head.width = global_sprite_width
         head.height = global_sprite_height
         head.name = 'head'
         head.image = 'snake'
-        head.direction.X = 1;
         head.controller = new Controller()
 
-        if (single_player) {
+        head.X = 40
+        head.Y = 40
+        head.Z = 1
+        head.direction.X = 1
+
+        let food = new Food(false);
+        food.X = Math.floor(Math.random() * (global_canvas_width / 20)) * 20;
+        food.Y = Math.floor(Math.random() * (global_canvas_height / 20)) * 20;
+        food.width = global_sprite_width
+        food.height = global_sprite_height
+        food.name = 'food'
+        food.image = 'good food'
+
+        let badfood = new Food(true);
+        badfood.X = -40;
+        badfood.Y = -40;
+        badfood.width = global_sprite_width
+        badfood.height = global_sprite_height
+        badfood.name = 'food'
+        badfood.image = 'bad food'
+
+        if (game_mode == 'single') {
             // keyboard controls
             head.controller.addKey('87', 'w', 'up') // w key
             head.controller.addKey('38', 'up', 'up') // up arrow
@@ -260,7 +280,7 @@ class Game extends State {
             head.controller.addKey('39', 'right', 'right') // right arrow
         }
 
-        if (multi_player) {
+        if (game_mode == 'multi') {
             let head2 = new Snake()
             head2.X = width - 40
             head2.Y = height - 40
@@ -283,26 +303,103 @@ class Game extends State {
 
             head2.controller.addKey('68', 'd', 'right') // d key
             head.controller.addKey('39', 'right', 'right') // right arrow
-
-            w16.addToWorld(head2)
         }
 
+        if (game_mode == 'net') {
+            // keyboard controls
+            head.controller.addKey('87', 'w', 'up') // w key
+            head.controller.addKey('38', 'up', 'up') // up arrow
 
-        let food = new Food(false);
-        food.X = Math.floor(Math.random() * (global_canvas_width / 20)) * 20;
-        food.Y = Math.floor(Math.random() * (global_canvas_height / 20)) * 20;
-        food.width = global_sprite_width
-        food.height = global_sprite_height
-        food.name = 'food'
-        food.image = 'good food'
+            head.controller.addKey('65', 'a', 'left') // a key
+            head.controller.addKey('37', 'left', 'left') // left arrow
 
-        let badfood = new Food(true);
-        badfood.X = -40;
-        badfood.Y = -40;
-        badfood.width = global_sprite_width
-        badfood.height = global_sprite_height
-        badfood.name = 'food'
-        badfood.image = 'bad food'
+            head.controller.addKey('83', 's', 'down') // s key
+            head.controller.addKey('40', 'down', 'down') // down arrow
+
+            head.controller.addKey('68', 'd', 'right') // d key
+            head.controller.addKey('39', 'right', 'right') // right arrow
+
+            head.update = function () {
+                Snake.prototype.update.call(this)
+                w16.networking.sendData({ 'type': 'head', 'X': this.X, 'Y': this.Y })
+            }
+
+            let head2 = new Snake()
+            head2.width = global_sprite_width
+            head2.height = global_sprite_height
+            head2.name = 'head'
+            head2.image = 'snake'
+            head2.controller = new Controller()
+            head2.update = function () {
+                let buff = w16.networking.getBuffer()
+                if (buff.length > 0) {
+                    for (let val of buff) {
+                        if (val.type == 'head') {
+                            let newHead = val
+                            this.X = newHead.X
+                            this.Y = newHead.Y
+                        }
+                    }
+                }
+            }
+            w16.addToWorld(head2)
+
+            if (connection_initiator) {
+                head.X = 40
+                head.Y = 40
+                head.Z = 1
+                head.direction.X = 1
+
+                head2.X = width - 40
+                head2.Y = height - 40
+                head2.Z = 1
+                head2.direction.X = -1;
+
+                food.update = function () {
+                    Food.prototype.update.call(this)
+                    w16.networking.sendData({'type': 'food', 'X': this.X, 'Y': this.Y})
+                }
+                badfood.update = function () {
+                    Food.prototype.update.call(this)
+                    w16.networking.sendData({'type': 'badfood', 'X': this.X, 'Y': this.Y})
+                }
+            } else {
+                head2.X = 40
+                head2.Y = 40
+                head2.Z = 1
+                head2.direction.X = 1
+
+                head.X = width - 40
+                head.Y = height - 40
+                head.Z = 1
+                head.direction.X = -1;
+
+                food.update = function () {
+                    let buff = w16.networking.getBuffer()
+                    if (buff.length > 0) {
+                        for (let val of buff) {
+                            if (val.type == 'food') {
+                                let newFood = val
+                                this.X = newFood.X
+                                this.Y = newFood.Y
+                            }
+                        }
+                    }
+                }
+                badfood.update = function () {
+                    let buff = w16.networking.getBuffer()
+                    if (buff.length > 0) {
+                        for (let val of buff) {
+                            if (val.type == 'badfood') {
+                                let newFood = val
+                                this.X = newFood.X
+                                this.Y = newFood.Y
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         w16.addToWorld(head)
         w16.addToWorld(food)
@@ -313,7 +410,8 @@ class Game extends State {
 
 function mainMenu() {
     let single = new Button()
-    let multi = new Button()
+    let multiLocal = new Button()
+    let multiNetworked = new Button()
 
     game = new Game()
 
@@ -321,31 +419,56 @@ function mainMenu() {
 
     single.text = 'Single Player'
     single.centerX = width / 2
-    single.centerY = height / 3
+    single.centerY = height / 8
     single.onClick = function () {
-        single_player = true
-        multi_player = false
+        game_mode = 'single'
         w16.clearWorld();
         w16.menu_active = false;
+        w16.stateMan.changeState('game')
     }
 
 
-    multi.text = 'Local Multiplayer'
-    multi.centerX = width / 2
-    multi.centerY = 2 * height / 3
-    multi.onClick = function () {
-        single_player = false
-        multi_player = true
+    multiLocal.text = 'Local Multiplayer'
+    multiLocal.centerX = width / 2
+    multiLocal.centerY = height / 3
+    multiLocal.onClick = function () {
+        game_mode = 'multi'
         w16.clearWorld();
         w16.menu_active = false;
+        w16.stateMan.changeState('game')
     }
+
+    multiNetworked.text = 'Online Multiplayer'
+    multiNetworked.centerX = width / 2
+    multiNetworked.centerY = 2 * height / 3
+    multiNetworked.onClick = function () {
+        game_mode = 'net'
+        w16.networking.sendData('START')
+        w16.clearWorld();
+        w16.menu_active = false;
+        connection_initiator = true
+        w16.stateMan.changeState('game')
+    }
+
     w16.menu.buttons.push(single)
-    w16.menu.buttons.push(multi)
+    w16.menu.buttons.push(multiLocal)
+    w16.menu.buttons.push(multiNetworked)
 
-    w16.run(15)
+    netListner = new Body()
+    netListner.draw = function () { }
+    netListner.update = function () {
+        let buff = w16.networking.getBuffer()
+        if ('START' == buff[buff.length - 1]) {
+            game_mode = 'net'
+            connection_initiator = false
+            w16.stateMan.changeState('game')
+        }
+    }
+    w16.menu.buttons.push(netListner)
 }
 
 mainMenu()
+w16.run(5)
 
 document.getElementById('whyupdate').onclick = function () {
     if (w16.game_over) {
