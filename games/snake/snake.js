@@ -89,8 +89,8 @@ class Snake extends Body {
         context.drawImage(w16.resources.getImage(this.image), this.X, this.Y, this.width, this.height);
 
         context.font = "20px Helvetica";
-        context.fillText("Current Score: " + this.score, 0, 20);
-        context.fillText("High Score: " + high_score, 450, 20);
+        //context.fillText("Current Score: " + this.score, 0, 20);
+        //context.fillText("High Score: " + high_score, 450, 20);
         if (this.gameOver) {
             context.font = "40px Helvetica"
             context.fillText("Game Over", 200, 200);
@@ -128,6 +128,8 @@ class Snake extends Body {
         //this.score = this.children.length - 1
         if (high_score < this.score)
             high_score = this.score;
+        w16.score = this.score
+        w16.high_score = high_score
     }
 
     /**
@@ -181,7 +183,10 @@ class Snake extends Body {
     }
 
     endGame() {
-        w16.stop();
+        this.update = function() {}
+        if(game_mode != 'net'){
+            w16.stop();
+        }
         this.gameOver = true;
         w16.game_over = true;
     }
@@ -237,7 +242,7 @@ class Game extends State {
 
     startState() {
 
-        let head = new Snake()
+        var head = new Snake()
         head.width = global_sprite_width
         head.height = global_sprite_height
         head.name = 'head'
@@ -303,6 +308,8 @@ class Game extends State {
 
             head2.controller.addKey('68', 'd', 'right') // d key
             head.controller.addKey('39', 'right', 'right') // right arrow
+            
+            w16.addToWorld(head2)
         }
 
         if (game_mode == 'net') {
