@@ -408,7 +408,7 @@ class Game extends State {
 
 }
 
-function mainMenu() {
+function mainMenu() { 
     let single = new Button()
     let multiLocal = new Button()
     let multiNetworked = new Button()
@@ -458,6 +458,7 @@ function mainMenu() {
     netListner.draw = function () { }
     netListner.update = function () {
         let buff = w16.networking.getBuffer()
+        document.getElementById('playerID').textContent = 'Your ID is : ' + w16.networking.getId()
         if ('START' == buff[buff.length - 1]) {
             game_mode = 'net'
             connection_initiator = false
