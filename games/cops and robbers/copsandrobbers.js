@@ -7,6 +7,7 @@ w16.menu_active = true;
 w16.resources.addImage('wall', 'https://upload.wikimedia.org/wikipedia/commons/6/68/Solid_black.png');
 w16.resources.addImage('cop', 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Solid_blue.svg/512px-Solid_blue.svg.png');
 w16.resources.addImage('robber', 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Red.svg/512px-Red.svg.png');
+w16.resources.addImage('robber2', 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Solid_green.svg/512px-Solid_green.svg.png');
 
 game_grid_size  = 30;
 wall_chance = 0.1;
@@ -99,7 +100,7 @@ class Cop extends Body {
         this.Y = this.grid_y*global_sprite_height
     }
 
-    turn(){
+    takeTurn(){
         try{
             let path = astar.search(level.nodes, level.nodes[this.grid_y][this.grid_x], level.nodes[this.target.grid_y][this.target.grid_x])
             this.direction.X = path[0].y - this.grid_x
@@ -165,19 +166,18 @@ class Robber extends Body {
     update() {
         this.X = this.grid_x * global_sprite_width
         this.Y = this.grid_y * global_sprite_height
-
-        let overlaps = this.overlaps()
-        if (overlaps.length > 0) {
-            for (var collision of overlaps) {
-                this.handleCollisions(collision)
+        if (this.is_player){
+            let overlaps = this.overlaps()
+            if (overlaps.length > 0) {
+                for (var collision of overlaps) {
+                    this.handleCollisions(collision)
+                }
             }
-        }
-        if (!this.is_player){
-            let direction = parseInt(random()*2-1)
-            this.grid_x = this.grid_x + direction
-            this.grid_y = path[0].y + parseInt(1/direction)
-        }
-        else if (this.is_player){
+            if(this.score>=100){
+                w16.win = true
+                w16.stop()
+            }
+            
             this.changeDirection();
             if (!this.detectWallMove()&&(this.direction.X!=0 || this.direction.Y!=0)){
                 this.moveRobber(1)
@@ -190,29 +190,48 @@ class Robber extends Body {
                         this.handleCollisions(collision)
                     }
                 }
-
+                this.updateCurrentScore();
                 // update ai agents
                 for (let ai of turn_order){
-                    ai.turn()
+                    ai.takeTurn()
                 }
             }    
-            this.updateCurrentScore();
+            
+        }
+    }
+
+    takeTurn(){
+        try{
+        this.X = this.grid_x * global_sprite_width
+        this.Y = this.grid_y * global_sprite_height
+
+        let overlaps = this.overlaps()
+       
+            let newDirection = getRandomInt(0,4)
+            switch (newDirection){
+                case 0: this.direction.X = 1; this.direction.Y = 0; break; 
+                case 1: this.direction.X = -1; this.direction.Y = 0; break;
+                case 2: this.direction.X = 0; this.direction.Y = 1; break;
+                case 3: this.direction.X = 0; this.direction.Y = -1; break;
+            }
+            if (!this.detectWallMove()){
+                this.moveRobber(1)
+                this.direction = {X: 0, Y:0}
+                this.grid_x = this.X/global_sprite_width
+                this.grid_y = this.Y/global_sprite_height
+            }
+        } catch(err) {
+            console.log(err)
         }
     }
 
     updateCurrentScore() {
-        this.score = 0
-        var seg = this.child
-
-        while (seg != undefined) {
-            this.score += 1
-            seg = seg.child
-        }
-        //this.score = this.children.length - 1
+        this.score++
         if (high_score < this.score)
             high_score = this.score;
         w16.score = this.score
         w16.high_score = high_score
+        w16.score_color = 'white'
     }
 
     /**
@@ -289,8 +308,8 @@ class Game extends State {
         robber1.image = 'robber'
         robber1.controller = new Controller()
 
-        robber1.X = 40
-        robber1.Y = 40
+        robber1.X = getRandomInt(1, game_grid_size/2)*global_sprite_width
+        robber1.Y = getRandomInt(1, game_grid_size/2)*global_sprite_width
         robber1.grid_x = robber1.X/global_sprite_width
         robber1.grid_y = robber1.Y/global_sprite_height
         robber1.Z = 1
@@ -301,12 +320,13 @@ class Game extends State {
         robber2.width = global_sprite_width
         robber2.height = global_sprite_height
         robber2.name = 'ai'
-        robber2.image = 'robber'
-        robber2.X = 40
-        robber2.Y = 320
+        robber2.image = 'robber2'
+        robber2.X = getRandomInt(1, game_grid_size/2)*global_sprite_width
+        robber2.Y = getRandomInt(1, game_grid_size/2)*global_sprite_width
         robber2.grid_x = robber2.X / global_sprite_width
         robber2.grid_y = robber2.Y / global_sprite_height
         robber2.Z = 1
+        turn_order.push(robber2)
 
         let number_of_cops = 5;
         for (let x = 0; x < number_of_cops; x++){
@@ -319,7 +339,10 @@ class Game extends State {
 
             w16.addToWorld(cop)
             turn_order.push(cop)
-            cop.target = robber1
+            if(x<3)
+                cop.target = robber1
+            else
+                cop.target = robber2
         }
 
 
@@ -338,6 +361,7 @@ class Game extends State {
         
 
         w16.addToWorld(robber1)
+        w16.addToWorld(robber2)
 
         for (let row of level.nodes) {
             for (let node of row){
@@ -360,7 +384,7 @@ class Game extends State {
 game = new Game()
 w16.stateMan.addState('game', game)
 w16.stateMan.changeState('game')
-w16.run(1)
+w16.run(5)
 
 
 document.getElementById('whyupdate').onclick = function () {

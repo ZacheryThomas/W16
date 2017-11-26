@@ -29,6 +29,7 @@ class W16 {
         this.background = false
         this.score = -1
         this.high_score = -1
+        this.win = false
         this.game_over = false
         this.tickReceivers = []
         this.score_color = 'black';
@@ -123,6 +124,11 @@ class W16 {
         if (this.background)
             context.drawImage(this.resources.getImage('Background'), 0, 0)
 
+        // draw each body in world
+        for (var body of drawOrder) {
+            body.draw(context)
+        }
+
         // Display score if set
         if (this.score > -1) {
             context.font = "20px Helvetica";
@@ -132,12 +138,14 @@ class W16 {
                 context.fillText("High Score: " + this.high_score, canvas.width - 200, 20);
             if (this.game_over) {
                 context.font = "40px Helvetica"
+                context.fillStyle = 'red';
                 context.fillText("Game Over", 200, 200);
             }
-        }
-        // draw each body in world
-        for (var body of drawOrder) {
-            body.draw(context)
+            if (this.win) {
+                context.font = "40px Helvetica"
+                context.fillStyle = 'green';
+                context.fillText("You Win", 200, 200);
+            }
         }
 
     }
