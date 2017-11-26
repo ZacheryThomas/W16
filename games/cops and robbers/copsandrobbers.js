@@ -149,6 +149,7 @@ class Robber extends Body {
         this.score = 0;
         this.is_player = false;
         this.direction = {X: 0, Y:0}
+        this.keyReset = true
 
         this.controller = new Controller();
     }
@@ -266,23 +267,35 @@ class Robber extends Body {
     }
 
     changeDirection() {
-        if (this.controller.up()) {
-                this.direction.Y = -1;
-                this.direction.X = 0;
-        }
-        if (this.controller.down()) {
-                this.direction.Y = 1;
-                this.direction.X = 0;
-        }
-        if (this.controller.left()) {
-                this.direction.Y = 0;
-                this.direction.X = -1;
-        }
-        if (this.controller.right()) {
-                this.direction.Y = 0;
-                this.direction.X = 1;
-        }
+        let directions = {
+                        up: {keydown: this.controller.up, Y: -1, X: 0},
+                        down: {keydown: this.controller.down, Y: 1, X: 0},
+                        left: {keydown: this.controller.left, Y: 0, X: -1},
+                        right: {keydown: this.controller.right, Y: 0, X: 1}
+                     }
 
+        /**
+         * only allow for one move before having to lift up all keys
+         * and input keypress again
+         */
+        let keydown = false
+        for (let res in directions){
+            if (directions[res].keydown()){
+                keydown = true
+                if (this.keyReset == false){
+                    this.direction.Y = 0
+                    this.direction.X = 0
+                } else {
+                    this.direction.Y = directions[res].Y;
+                    this.direction.X = directions[res].X;
+                }
+                this.keyReset = false
+            }
+        }
+        
+        if (keydown == false){
+            this.keyReset = true
+        }
     }
 
     moveRobber(active) {
@@ -384,7 +397,7 @@ class Game extends State {
 game = new Game()
 w16.stateMan.addState('game', game)
 w16.stateMan.changeState('game')
-w16.run(5)
+w16.run(120)
 
 
 document.getElementById('whyupdate').onclick = function () {
@@ -392,7 +405,7 @@ document.getElementById('whyupdate').onclick = function () {
         w16.stop();
         w16.clearWorld();
         game = new Game()
-        w16.run(5)        
+        w16.run(120)        
         w16.game_over = false
         w16.stateMan.changeState('game')
     }
