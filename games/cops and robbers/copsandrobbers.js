@@ -44,9 +44,7 @@ for(var x = 0; x <= game_grid_size; x++){
     }
     level_graph.push(subgraph)
 }
-
-console.log(level_graph)
-var level = new Graph(level_graph)
+var level = w16.graph(level_graph)
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -102,7 +100,7 @@ class Cop extends Body {
 
     takeTurn(){
         try{
-            let path = astar.search(level.nodes, level.nodes[this.grid_y][this.grid_x], level.nodes[this.target.grid_y][this.target.grid_x])
+            let path = w16.astar.search(level.nodes, level.nodes[this.grid_y][this.grid_x], level.nodes[this.target.grid_y][this.target.grid_x])
             this.direction.X = path[0].y - this.grid_x
             this.direction.Y = path[0].x - this.grid_y
 

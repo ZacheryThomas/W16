@@ -17,6 +17,10 @@ class W16 {
         this.stateMan = new StateManager()
         this.networking = new Networking()
         this.connecting = new Splash()
+        this.graph = function(g){
+            return new Graph(g)
+        }
+        this.astar = astar
         this.connecting.text.text = 'Connecting '
 
         this.stateMan.addState('menu', this.menu)
