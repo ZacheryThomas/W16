@@ -11,8 +11,8 @@ w16.resources.addImage('bad food', 'https://upload.wikimedia.org/wikipedia/commo
 //Sprite height and width
 global_sprite_width = 20;
 global_sprite_height = 20;
-global_canvas_height = document.getElementById("whyupdate").height;
-global_canvas_width = document.getElementById("whyupdate").width;
+global_canvas_height = canvas.height;
+global_canvas_width = canvas.width;
 
 game_mode = 'single'
 
@@ -328,7 +328,18 @@ class Game extends State {
 
             head.update = function () {
                 Snake.prototype.update.call(this)
-                w16.networking.sendData({ 'type': 'head', 'X': this.X, 'Y': this.Y })
+                w16.networking.sendData({ 'type': 'head', 'X': this.X, 'Y': this.Y, 'direction': this.direction})
+                
+                let currentSeg = undefined
+                if (this.child != undefined){
+                    currentSeg = this.child
+                                    
+                    while (currentSeg != undefined) {
+                        w16.networking.sendData({'type': 'seg', 'X': currentSeg.X, 'Y': currentSeg.Y})
+                        currentSeg = currentSeg.child
+                    }
+                }
+
             }
 
             let head2 = new Snake()
@@ -345,6 +356,27 @@ class Game extends State {
                             let newHead = val
                             this.X = newHead.X
                             this.Y = newHead.Y
+                            this.direction = newHead.direction
+                        }
+                        if (val.type == 'seg'){
+                            let tail = new Segment()
+                            tail.should_live = true
+                            tail.update = function (){
+                                console.log(tail.should_live)
+                                if (tail.should_live) {
+                                    tail.should_live = false
+                                }
+                                else {
+                                    w16.removeFromWorld(tail)
+                                }
+                            }
+                            tail.X = val.X;
+                            tail.Y = val.Y;
+                            tail.width = global_sprite_width
+                            tail.height = global_sprite_height
+                            tail.name = 'body'
+                            tail.image = 'snake'
+                            w16.addToWorld(tail)
                         }
                     }
                 }
@@ -476,10 +508,10 @@ function mainMenu() {
         game_mode = 'net'
         connection_initiator = false
         w16.stateMan.changeState('connecting')
-        w16.networking.connectToPeer(document.getElementById('hostID').value)
+        w16.networking.connectToPeer(document.getElementById('hostID').value.trim())
         var connection = new Body()
         connection.draw = function () { }
-        connection.ticksRemaining = 20
+        connection.ticksRemaining = 100
         connection.update = function() {        
             if(connection.ticksRemaining-- >0 && !(w16.networking.conn === undefined) && w16.networking.conn.open){
                 w16.menu_active = false;
