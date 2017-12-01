@@ -2,9 +2,18 @@ body {
     padding: 50px 0px 50px 0px;
 }
 
+pre.prettyprint {
+    margin: 5px 0px 20px 0px;
+    padding-top: 5px;
+}
+
+h1 {
+    text-align: center;
+}
+
 a.anchor {
     display: block;
     position: relative;
-    top: -250px;
+    top: -50px;
     visibility: hidden;
 }

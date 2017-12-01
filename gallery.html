@@ -41,6 +41,7 @@
                         <li class="active"><a href="#overview">Overview</a></li>
                         <li><a href="#getting_started">Getting Started</a></li>
                         <li><a href="#sample_games">Sample Games</a></li>
+                        <li><a href="#about">About Us</a></li>
                     </ul>
                 </div>
                 <!--/.nav-collapse -->
@@ -53,21 +54,36 @@
             <br>
             <h1 class="header">Overview</h1>
     
-            W16 is a javascript-based game engine using the HTML 5 canvas for 2-d rendering and animation.
+            W16 is a javascript-based game engine using the HTML 5 canvas for 2-d rendering and animation. Read on to discover what W16 can do for you!
             <br><br><br>
             <h1>Features: </h1>
     
-            <h3>Integrated Physics library w/ Matter.js</h3> Used matter.js to do physics. Works most of the time.
-            <h3>Physics defined collisions</h3> Supports axis aligned bounding box based collisions as well as circle based collision.
-            <h3>Particle System</h3> Simple to implement using body objects. Implemented in asteroids
-            <h3>Inputs</h3> Mouse and Keyboard input. Allows for different ‘controllers’ for each game object
-            <h3>Sprite Rendering</h3> Supports 2D sprite rendering with animations of one or more sprites
-            <h3>Integrated Networking library w/ Peer.js</h3> Peer to Peer networking has never been easier! Just requires client
-            to have an id to connect to peer.
-            <h3>Game State Management</h3> Control the game state between menus and the running game.
-            <h3>Menu Management</h3> Has customisable menus for your game, with buttons which can be customized, sized, and placed
-            with custom click functions.
-            <h3>Resource Loading</h3> Displays a loading screen while loading the game assets on loading.
+            <h3>Integrated Physics library w/ Matter.js</h3>
+            Used Matter.js to simulate 2D physics intractions. Easy to use with plenty of documentation! Supports many advanced features such as grouping.
+    
+            <h3>Physics defined collisions</h3>
+            Supports axis aligned bounding box based collisions as well as circle based collision.
+
+            <h3>Particle System</h3>
+            Simple to implement using body objects. An example of this an be found in the <a href="games/alchemy/alchemy.html">Asteroids!</a> game.
+
+            <h3>Inputs</h3>
+            Supports Mouse and Keyboard input. Allows for different keyboard 'controllers' for each game object. Supports functionality to determine if mouse has clicked an object between updates.
+
+            <h3>Sprite Rendering</h3>
+            Supports 2D sprite rendering with animations of one or more sprites.
+
+            <h3>Integrated Networking library w/ Peer.js</h3>
+            Peer to Peer networking has never been easier! Just requires client to have an id to connect to peer. Stores buffer of recieved data between updates.
+
+            <h3>Game State Management</h3>
+            Control the game state between menus and the running game. Allows for easy resource/object management between states.
+
+            <h3>Menu Management</h3>
+            Has customisable menus for games and menus. Supports customizable buttons that can be resized, and placed wherever. Also supports easy callbacks for onclick events.
+
+            <h3>Resource Loading</h3>
+            Displays a loading screen while loading the game assets are loading.
     
     
             <br><br><br>
@@ -166,118 +182,119 @@
             and height for the sprite. The image is declared as a resource and added to the engine. The card later used the associated
             label to associate the card with the sprite. <br><br> To run the game, a Game state must be created and declared
             to the engine. The class Game extends State, and the w16 state manager is notified there is a state called Game by
-            calling
+            calling:
             <pre class="prettyprint">
     game = new Game()
     w16.stateMan.addState('game', game)
             </pre>
             
-            The game is run by calling
+            The game engine begins running by calling:
             <pre class="prettyprint">
     w16.run(30)
             </pre>
                 
             where 30 is the number of updates called per second.<br><br>
             
-            The draw function can be overwritten for each individual object. In the above example, we can extend it by adding a timer and update the draw method when the timer expires.
+            The draw function can be overwritten for each individual object. In the example below, we can extend it by adding a timer and update the draw method when the timer expires.
             <pre class="prettyprint">             
-                class Card extends Body{ 
-                    constructor(){ 
-                        super() 
-                        this.timerActive = true;
-                        this.ticksRemaining = 300;
-                    }  
-                
-                    update(){ 
-                        Body.prototype.update.call(this)
-                        this.X = Math.random() * canvas.width 
-                        this.Y = Math.random() * canvas.height  
-                
-                        let overlaps = this.overlaps(); 
-                        if (overlaps.length > 0){ 
-                            for (var collision of overlaps){ 
-                                this.handleCollisions(collision) 
-                            } 
-                        } 
-                    }
-                    
-                    draw(context){
-                        Body.prototype.draw.call(this)
-                        if (this.ticksRemaining <1) {
-                            context.font = "40px Helvetica"
-                            context.fillText("Time's up!", this.X, this.Y);
-                        }
-                    }
-                }  
+    class Card extends Body{ 
+        constructor(){ 
+            super() 
+            this.timerActive = true;
+            this.ticksRemaining = 300;
+        }  
+    
+        update(){ 
+            Body.prototype.update.call(this)
+            this.X = Math.random() * canvas.width 
+            this.Y = Math.random() * canvas.height  
+    
+            let overlaps = this.overlaps(); 
+            if (overlaps.length > 0){ 
+                for (var collision of overlaps){ 
+                    this.handleCollisions(collision) 
+                } 
+            } 
+        }
+        
+        draw(context){
+            Body.prototype.draw.call(this)
+            if (this.ticksRemaining <1) {
+                context.font = "40px Helvetica"
+                context.fillText("Time's up!", this.X, this.Y);
+            }
+        }
+    }  
             </pre>
+
             This new card class includes a timer which runs for 10 seconds, or 300 in-game updates. The Body class handles the timer updates, so we include the update calls on the body. Similarly, the body 
             class has drawing functions, so we include that in the override function for drawing. This allows the body to draw the object as normal, and allows us to add new functionality in this function.
             This function draws a message which says "Time's up" when the ticksRemaining is less than 1. This renders wherever the card object was when the draw call occurs.
             <br><br>
-            Input is important to any game, and the various sample games have various methods for input. To add input, we simply add a controller, and bind the options we want to have happen when the input is pressed.
+            Input is important to any game and the various sample games have various methods for input. To add input, we simply add a controller and bind the options we want to have happen when the input is pressed.
             <pre class="prettyprint">
-                class Card extends Body{ 
-                    constructor(){ 
-                        super() 
-                    }  
-                
-                    update(){ 
-                        Body.prototype.update.call(this)
-                        this.controls()
-                        wrap(this)
-                    } 
+    class Card extends Body{ 
+        constructor(){ 
+            super() 
+        }  
+    
+        update(){ 
+            Body.prototype.update.call(this)
+            this.controls()
+            wrap(this)
+        } 
 
-                    controls() {
-                        let x = 0, y = 0
-                        let thrust = 0.0025
-                        if (w16.controller.up) {
-                            let y = -Math.cos(this.angle)
-                            let x = Math.sin(this.angle)
-                            this.physics_body.force = { 'x': thrust * x, 'y': thrust * y }
-                        }
-                             
-                        if (w16.controller.left) {
-                            w16.physics.Body.rotate(this.physics_body, -0.1)
-                        }
+        controls() {
+            let x = 0, y = 0
+            let thrust = 0.0025
+            if (this.controller.up()) {
+                let y = -Math.cos(this.angle)
+                let x = Math.sin(this.angle)
+                this.physics_body.force = { 'x': thrust * x, 'y': thrust * y }
+            }
+                    
+            if (this.controller.left()) {
+                w16.physics.Body.rotate(this.physics_body, -0.1)
+            }
+    
+            if (this.controller.right()) {
+                w16.physics.Body.rotate(this.physics_body, 0.1)
+            }
+        }
+    }  
                 
-                        if (w16.controller.right) {
-                            w16.physics.Body.rotate(this.physics_body, 0.1)
-                        }
-                    }
-                }  
-                
-                class Game extends State{ 
-                    constructor(){ 
-                        super() 
-                    }  
-                
-                    startState(){ 
-                        var card = new Card() 
-                        card.X = 0 
-                        card.Y = 0 
-                        card.width = 200 
-                        card.height = 200 
-                        card.name = 'hombre' 
-                        card.image = 'card'  
-                        card.center = { 'x': card.width / 2, 'y': card.height / 2 }
-                        card.physics_body = w16.physics.Bodies.rectangle(card.X, card.Y, card.width, card.height)
-                        card.controller = new Controller()
+    class Game extends State{ 
+        constructor(){ 
+            super() 
+        }  
+    
+        startState(){ 
+            var card = new Card() 
+            card.X = 0 
+            card.Y = 0 
+            card.width = 200 
+            card.height = 200 
+            card.name = 'hombre' 
+            card.image = 'card'  
+            card.center = { 'x': card.width / 2, 'y': card.height / 2 }
+            card.physics_body = w16.physics.Bodies.rectangle(card.X, card.Y, card.width, card.height)
+            card.controller = new Controller()
 
-                        card.controller.addKey('87', 'w', 'up') // w key
-                        card.controller.addKey('38', 'up', 'up') // up arrow
-            
-                        card.controller.addKey('65', 'a', 'left') // a key
-                        card.controller.addKey('37', 'left', 'left') // left arrow
-            
-                        card.controller.addKey('83', 's', 'down') // s key
-                        card.controller.addKey('40', 'down', 'down') // down arrow
-            
-                        card.controller.addKey('68', 'd', 'right') // d key
-                        card.controller.addKey('39', 'right', 'right') // right arrow
-                
-                        w16.addToWorld(card) 
-                    } 
-                }  
+            card.controller.addKey('87', 'w', 'up') // w key
+            card.controller.addKey('38', 'up', 'up') // up arrow
+
+            card.controller.addKey('65', 'a', 'left') // a key
+            card.controller.addKey('37', 'left', 'left') // left arrow
+
+            card.controller.addKey('83', 's', 'down') // s key
+            card.controller.addKey('40', 'down', 'down') // down arrow
+
+            card.controller.addKey('68', 'd', 'right') // d key
+            card.controller.addKey('39', 'right', 'right') // right arrow
+    
+            w16.addToWorld(card) 
+        } 
+    }  
             </pre>
             This snippet includes movement similar to the asteroids sample game. This requires making the card a physics body, subject to the physics calculations of the engine.
             To introduce the input, we add a controller to the card object. A controller is an object which interfaces with the keyboard abstractly, allowing the controller to map booleans to specific characters.
@@ -285,7 +302,7 @@
                 card.controller.addKey('87', 'w', 'up') // w key
                 card.controller.addKey('38', 'up', 'up') // up arrow
             </pre>
-            binds both the 'w' key and the 'up' key to the controller.up boolean. The first two arguments are the key number, and the actual key pressed. The third argument is what the controller boolean should be for that keypress.
+            The above code binds both the 'w' key and the 'up' key to the controller.up function. The first two arguments are the key number, and the actual key pressed. The third argument is what the controller boolean should be for that keypress.
             Using this controller object, we may bind multiple keys to the same game function, and rely on the controller instead of raw keyboard input.
             <br><br><br>
             Thanks for reading and your interest in the w16 engine! If you'd like to take a look at the sample games, or see how to implement more advanced features, 
@@ -303,10 +320,19 @@
             <br>
             <a href="games/cops and robbers/copsandrobbers.html">Cops and Robbers!</a>
     
+
+            <a class="anchor" id="about"></a>
+            <h1>About Us:</h1>
+            <h3>Developers and such:</h3>
+            <p>This engine was developed for NCSU's Game Engine Design class. The developers are <a href="https://github.com/AlexanderCard">Alex Card</a> and <a href="http://www.zacherythomas.com">Zachery Thomas</a>.</p>
+            
+            <h3>Why the name W16?</h3>
+            <p>Cause its a fast <a href="https://en.wikipedia.org/wiki/W16_engine">engine!</a></p>
             
         </div>
         <!-- end of main container -->
         <br><br><br>
     </body>
-    
-    </html>
+    <script src="index.js"></script>
+
+</html>
