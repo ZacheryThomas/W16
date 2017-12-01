@@ -1,122 +1,185 @@
 <html>
-    <head>
-        <title>W16 Engine and Games</title>
-    </head>
-    <body>
 
-            <h1>Overview</h1>
-                       
-            W16 is a javascript-based game engine using the HTML 5 canvas for 2-d rendering and animation.
-            <br><br><br>
-            <h1>Features: </h1>
-            
-            <h2>Integrated Physics library w/ Matter.js -</h2> Used matter.js to do physics. Works most of the time.
-            <h2>Physics defined collisions -</h2> Supports axis aligned bounding box based collisions as well as circle based collision.
-            <h2>Particle System -</h2> Simple to implement using body objects. Implemented in asteroids
-            <h2>Inputs -</h2> Mouse and Keyboard input. Allows for different ‘controllers’ for each game object
-            <h2>Sprite Rendering -</h2> Supports 2D sprite rendering with animations of one or more sprites
-            <h2>Integrated Networking library w/ Peer.js -</h2> Peer to Peer networking has never been easier! Just requires client to have an id to connect to peer.
-            <h2>Game State Management -</h2> Control the game state between menus and the running game.
-            <h2>Menu Management -</h2> Has customisable menus for your game, with buttons which can be customized, sized, and placed with custom click functions.
-            <h2>Resource Loading -</h2> Displays a loading screen while loading the game assets on loading.
-            
-            
-            <br><br><br>
-            <h1>Getting Started: </h1>
-            We’re gonna make a small game. You’re gonna make a sprite and its gonna do something. 
-            
-            First off you’re gonna need a canvas. Give it the id “w16canvas”. Size it to whatever you want!
-            <pre class="prettyprint">
-            &lt canvas id="w16canvas" width="800" height="400"&gt 
-               Canvas not supported
-            &lt /canvas&gt </pre>
-            Then import the engine. It’s already got Matter.js and Peer.js baked in. We made it easy for you. You’re welcome!
-            <pre class="prettyprint">
-            &lt script src="w16.min.js"&gt &lt /script&gt 
-            </pre>
-            After you import the engine, then you add the script for your code! You could import your code first, and wait for the engine to load fully. Its up to you.
-            <pre class="prettyprint">
-            &lt script src="game.js"&gt &lt /script&gt 
-            </pre>
-            
-            Cool, now let's move on to the fun part, JavaScript!
-            
-            
-            <h2>HTML Sample:</h2>
-            <pre class="prettyprint">
-            &ltcanvas id="w16canvas" width="800" height="400"&gt 
-               Canvas not supported
-            &lt/canvas&gt 
-            &ltscript src="w16.min.js"&gt &lt/script&gt 
-            &ltscript src="game.js"&gt &lt/script&gt 
-            </pre>
-            <h2>Game Sample:</h2>
-            
-            <pre class="prettyprint">
-            w16 = new W16()  
-            
-            //used with permission from the Artist: Merve Naz Yelmen 
-            w16.resources.addImage('card', 'http://i.imgur.com/IztPI0x.jpg');  
-            
-            class Card extends Body{ 
-               constructor(){ 
-                   super() 
-               }  
-            
-               update(){ 
-                   this.X = Math.random() * canvas.width 
-                   this.Y = Math.random() * canvas.height  
-            
-                   let overlaps = this.overlaps(); 
-                   if (overlaps.length > 0){ 
-                       for (var collision of overlaps){ 
-                           this.handleCollisions(collision) 
-                       } 
-                   } 
-               } 
-            }  
-            
-            class Game extends State{ 
-               constructor(){ 
-                   super() 
-               }  
-            
-               startState(){ 
-                   var card = new Card() 
-                   card.X = 0 
-                   card.Y = 0 
-                   card.width = 200 
-                   card.height = 200 
-                   card.name = 'hombre' 
-                   card.image = 'card'  
-            
-                   w16.addToWorld(card) 
-               } 
-            }  
+<head>
+    <title>W16 Engine and Games</title>
+
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+        crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+                    aria-controls="navbar">
+                          <span class="sr-only">Toggle navigation</span>
+                          <span class="icon-bar"></span>
+                          <span class="icon-bar"></span>
+                          <span class="icon-bar"></span>
+                        </button>
+                <a class="navbar-brand" href="#">W16</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#overview">Overview</a></li>
+                    <li><a href="#getting_started">About</a></li>
+                    <li><a href="#sample_games">Sample Games</a></li>
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <a class="anchor" id="overview"></a>
+        <h1 class="header">Overview</h1>
+
+        W16 is a javascript-based game engine using the HTML 5 canvas for 2-d rendering and animation.
+        <br><br><br>
+        <h1>Features: </h1>
+
+        <h3>Integrated Physics library w/ Matter.js</h3> Used matter.js to do physics. Works most of the time.
+        <h3>Physics defined collisions</h3> Supports axis aligned bounding box based collisions as well as circle based collision.
+        <h3>Particle System</h3> Simple to implement using body objects. Implemented in asteroids
+        <h3>Inputs</h3> Mouse and Keyboard input. Allows for different ‘controllers’ for each game object
+        <h3>Sprite Rendering</h3> Supports 2D sprite rendering with animations of one or more sprites
+        <h3>Integrated Networking library w/ Peer.js</h3> Peer to Peer networking has never been easier! Just requires client
+        to have an id to connect to peer.
+        <h3>Game State Management</h3> Control the game state between menus and the running game.
+        <h3>Menu Management</h3> Has customisable menus for your game, with buttons which can be customized, sized, and placed
+        with custom click functions.
+        <h3>Resource Loading</h3> Displays a loading screen while loading the game assets on loading.
+
+
+        <br><br><br>
+        <a class="anchor" id="getting_started"></a>
+        <h1>Getting Started: </h1>
+        We’re gonna make a small game. You’re gonna make a sprite and its gonna do something. First off you’re gonna need a canvas.
+        Give it the id “w16canvas”. Size it to whatever you want!
+
+        <pre class="prettyprint">
+&ltcanvas id="w16canvas" width="800" height="400"&gt 
+    Canvas not supported
+&lt/canvas&gt
+        </pre>
         
-            game = new Game()
-            w16.stateMan.addState('game', game)
-            w16.run(30)
-            </pre>  
+        Then import the engine. It’s already got Matter.js and Peer.js baked in. We made it easy for you. You’re welcome!
+        <pre class="prettyprint">
+&ltscript src="w16.min.js"&gt &lt /script&gt 
+        </pre>
+        
+        After you import the engine, then you add the script for your code! You could import your code first, and wait for
+        the engine to load fully. Its up to you.
+        <pre class="prettyprint">
+&ltscript src="game.js"&gt &lt /script&gt 
+        </pre>
+        
+        Cool, now let's move on to the fun part, JavaScript!
+        <h3>HTML Sample:</h3>
+        <pre class="prettyprint">
+&ltcanvas id="w16canvas" width="800" height="400"&gt 
+    Canvas not supported
+&lt/canvas&gt 
+&ltscript src="w16.min.js"&gt &lt/script&gt 
+&ltscript src="game.js"&gt &lt/script&gt 
+        </pre>
 
-            The engine object is created with the line 
-            <pre class="prettyprint">
-            w16 = new W16()</pre>
-            This engine is the driving force for the game. Any objects you wish you have in the game, must be added to the game engine object by 
-            <pre class="prettyprint">
-            w16.addToWorld(object)</pre>
-            In the above example, a card object is defined, and created given an X and Y position on the canvas, and a width and height for the sprite. The image is declared as a resource and added to the engine.
-            The card later used the associated label to associate the card with the sprite. <br><br>
-            To run the game, a Game state must be created and declared to the engine. The class Game extends State, and the w16 state manager is notified there is a state called Game by calling
-            <pre class="prettyprint">
-            game = new Game()
-            w16.stateMan.addState('game', game)</pre>
-            The game is run by calling 
-            <pre class="prettyprint">
-            w16.run(30)</pre>
-            where 30 is the number of updates called per second.
+        <h3>Game Sample:</h3>
+
+        <pre class="prettyprint">
+w16 = new W16()  
+
+//used with permission from the Artist: Merve Naz Yelmen 
+w16.resources.addImage('card', 'http://i.imgur.com/IztPI0x.jpg');  
+
+class Card extends Body{ 
+    constructor(){ 
+        super() 
+    }  
+
+    update(){ 
+        this.X = Math.random() * canvas.width 
+        this.Y = Math.random() * canvas.height  
+
+        let overlaps = this.overlaps(); 
+        if (overlaps.length > 0){ 
+            for (var collision of overlaps){ 
+                this.handleCollisions(collision) 
+            } 
+        } 
+    } 
+}  
+
+class Game extends State{ 
+    constructor(){ 
+        super() 
+    }  
+
+    startState(){ 
+        var card = new Card() 
+        card.X = 0 
+        card.Y = 0 
+        card.width = 200 
+        card.height = 200 
+        card.name = 'hombre' 
+        card.image = 'card'  
+
+        w16.addToWorld(card) 
+    } 
+}  
+
+game = new Game()
+w16.stateMan.addState('game', game)
+w16.run(30)
+        </pre>
+        
+        The engine object is created with the line
+        <pre class="prettyprint">
+w16 = new W16()
+        </pre>
             
-            <br><br><br>
+        This engine is the driving force for the game. Any objects you wish you have in the game, must be added to the game engine object by
+        <pre class="prettyprint">
+w16.addToWorld(object)
+        </pre>
+        
+        In the above example, a card object is defined, and created given an X and Y position on the canvas, and a width
+        and height for the sprite. The image is declared as a resource and added to the engine. The card later used the associated
+        label to associate the card with the sprite. <br><br> To run the game, a Game state must be created and declared
+        to the engine. The class Game extends State, and the w16 state manager is notified there is a state called Game by
+        calling
+        <pre class="prettyprint">
+game = new Game()
+w16.stateMan.addState('game', game)
+        </pre>
+        
+        The game is run by calling
+        <pre class="prettyprint">
+w16.run(30)
+        </pre>
+            
+        where 30 is the number of updates called per second.
+
+        <br><br><br>
+        <a class="anchor" id="sample_games"></a>
         <h1>Sample Games:</h1>
         <a href="games/alchemy/alchemy.html">Alchemy!</a>
         <br>
@@ -125,6 +188,10 @@
         <a href="games/asteroids/asteroids.html">Asteroids!</a>
         <br>
         <a href="games/cops and robbers/copsandrobbers.html">Cops and Robbers!</a>
-    </body>
-    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+
+    </div>
+    <!-- end of main container -->
+
+</body>
+
 </html>

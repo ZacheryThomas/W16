@@ -1,6 +1,6 @@
 // By: Alex Card and Zachery Thomas
 
-canvas = document.getElementById("whyupdate");
+canvas = document.getElementById("w16canvas");
 context = canvas.getContext('2d');
 
 

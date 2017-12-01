@@ -17,11 +17,11 @@ global_sprite_width = 20;
 global_sprite_height = 20;
 
 // Scale canvas size to tile size
-document.getElementById("whyupdate").height = (game_grid_size + 1) * global_sprite_height;
-document.getElementById("whyupdate").width = (game_grid_size + 1) * global_sprite_width;
+canvas.height = (game_grid_size + 1) * global_sprite_height;
+canvas.width = (game_grid_size + 1) * global_sprite_width;
 
-global_canvas_height = document.getElementById("whyupdate").height;
-global_canvas_width = document.getElementById("whyupdate").width;
+global_canvas_height = canvas.height;
+global_canvas_width = canvas.width;
 
 var high_score = 0;
 
