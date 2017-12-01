@@ -99,17 +99,21 @@
             w16.run(30)
             </pre>  
 
-            The engine object is created with the line <br><br>
-            w16 = new W16()<br><br>
-            This engine is the driving force for the game. Any objects you wish you have in the game, must be added to the game engine object by <br><br>
-            w16.addToWorld(object)<br><br>
+            The engine object is created with the line 
+            <pre class="prettyprint">
+            w16 = new W16()</pre>
+            This engine is the driving force for the game. Any objects you wish you have in the game, must be added to the game engine object by 
+            <pre class="prettyprint">
+            w16.addToWorld(object)</pre>
             In the above example, a card object is defined, and created given an X and Y position on the canvas, and a width and height for the sprite. The image is declared as a resource and added to the engine.
             The card later used the associated label to associate the card with the sprite. <br><br>
-            To run the game, a Game state must be created and declared to the engine. The class Game extends State, and the w16 state manager is notified there is a state called Game by calling <br><br>
-            game = new Game()<br>
-            w16.stateMan.addState('game', game)<br><br>
-            The game is run by calling <br><br>
-            w16.run(30)<br><br>
+            To run the game, a Game state must be created and declared to the engine. The class Game extends State, and the w16 state manager is notified there is a state called Game by calling
+            <pre class="prettyprint">
+            game = new Game()
+            w16.stateMan.addState('game', game)</pre>
+            The game is run by calling 
+            <pre class="prettyprint">
+            w16.run(30)</pre>
             where 30 is the number of updates called per second.
             
             <br><br><br>
