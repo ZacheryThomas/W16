@@ -1,197 +1,314 @@
 <html>
-
-<head>
-    <title>W16 Engine and Games</title>
-
-    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
-
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-        crossorigin="anonymous"></script>
-
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-        crossorigin="anonymous">
-
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
-        crossorigin="anonymous">
-
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-        crossorigin="anonymous"></script>
-
-    <link rel="stylesheet" href="styles.css">
-</head>
-
-<body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    
+    <head>
+        <title>W16 Engine and Games</title>
+    
+        <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+    
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+            crossorigin="anonymous">
+    
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+            crossorigin="anonymous">
+    
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    
+    <body>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+                        aria-controls="navbar">
+                              <span class="sr-only">Toggle navigation</span>
+                              <span class="icon-bar"></span>
+                              <span class="icon-bar"></span>
+                              <span class="icon-bar"></span>
+                            </button>
+                    <a class="navbar-brand" href="#">W16</a>
+                </div>
+                <div id="navbar" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#overview">Overview</a></li>
+                        <li><a href="#getting_started">Getting Started</a></li>
+                        <li><a href="#sample_games">Sample Games</a></li>
+                    </ul>
+                </div>
+                <!--/.nav-collapse -->
+            </div>
+        </nav>
+    
         <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
-                    aria-controls="navbar">
-                          <span class="sr-only">Toggle navigation</span>
-                          <span class="icon-bar"></span>
-                          <span class="icon-bar"></span>
-                          <span class="icon-bar"></span>
-                        </button>
-                <a class="navbar-brand" href="#">W16</a>
-            </div>
-            <div id="navbar" class="collapse navbar-collapse">
-                <ul class="nav navbar-nav">
-                    <li class="active"><a href="#overview">Overview</a></li>
-                    <li><a href="#getting_started">About</a></li>
-                    <li><a href="#sample_games">Sample Games</a></li>
-                </ul>
-            </div>
-            <!--/.nav-collapse -->
-        </div>
-    </nav>
-
-    <div class="container">
-
-        <a class="anchor" id="overview"></a>
-        <h1 class="header">Overview</h1>
-
-        W16 is a javascript-based game engine using the HTML 5 canvas for 2-d rendering and animation.
-        <br><br><br>
-        <h1>Features: </h1>
-
-        <h3>Integrated Physics library w/ Matter.js</h3> Used matter.js to do physics. Works most of the time.
-        <h3>Physics defined collisions</h3> Supports axis aligned bounding box based collisions as well as circle based collision.
-        <h3>Particle System</h3> Simple to implement using body objects. Implemented in asteroids
-        <h3>Inputs</h3> Mouse and Keyboard input. Allows for different ‘controllers’ for each game object
-        <h3>Sprite Rendering</h3> Supports 2D sprite rendering with animations of one or more sprites
-        <h3>Integrated Networking library w/ Peer.js</h3> Peer to Peer networking has never been easier! Just requires client
-        to have an id to connect to peer.
-        <h3>Game State Management</h3> Control the game state between menus and the running game.
-        <h3>Menu Management</h3> Has customisable menus for your game, with buttons which can be customized, sized, and placed
-        with custom click functions.
-        <h3>Resource Loading</h3> Displays a loading screen while loading the game assets on loading.
-
-
-        <br><br><br>
-        <a class="anchor" id="getting_started"></a>
-        <h1>Getting Started: </h1>
-        We’re gonna make a small game. You’re gonna make a sprite and its gonna do something. First off you’re gonna need a canvas.
-        Give it the id “w16canvas”. Size it to whatever you want!
-
-        <pre class="prettyprint">
-&ltcanvas id="w16canvas" width="800" height="400"&gt 
-    Canvas not supported
-&lt/canvas&gt
-        </pre>
-        
-        Then import the engine. It’s already got Matter.js and Peer.js baked in. We made it easy for you. You’re welcome!
-        <pre class="prettyprint">
-&ltscript src="w16.min.js"&gt &lt /script&gt 
-        </pre>
-        
-        After you import the engine, then you add the script for your code! You could import your code first, and wait for
-        the engine to load fully. Its up to you.
-        <pre class="prettyprint">
-&ltscript src="game.js"&gt &lt /script&gt 
-        </pre>
-        
-        Cool, now let's move on to the fun part, JavaScript!
-        <h3>HTML Sample:</h3>
-        <pre class="prettyprint">
-&ltcanvas id="w16canvas" width="800" height="400"&gt 
-    Canvas not supported
-&lt/canvas&gt 
-&ltscript src="w16.min.js"&gt &lt/script&gt 
-&ltscript src="game.js"&gt &lt/script&gt 
-        </pre>
-
-        <h3>Game Sample:</h3>
-
-        <pre class="prettyprint">
-w16 = new W16()  
-
-//used with permission from the Artist: Merve Naz Yelmen 
-w16.resources.addImage('card', 'http://i.imgur.com/IztPI0x.jpg');  
-
-class Card extends Body{ 
-    constructor(){ 
-        super() 
-    }  
-
-    update(){ 
-        this.X = Math.random() * canvas.width 
-        this.Y = Math.random() * canvas.height  
-
-        let overlaps = this.overlaps(); 
-        if (overlaps.length > 0){ 
-            for (var collision of overlaps){ 
-                this.handleCollisions(collision) 
+    
+            <a class="anchor" id="overview"></a><br>
+            <br>
+            <h1 class="header">Overview</h1>
+    
+            W16 is a javascript-based game engine using the HTML 5 canvas for 2-d rendering and animation.
+            <br><br><br>
+            <h1>Features: </h1>
+    
+            <h3>Integrated Physics library w/ Matter.js</h3> Used matter.js to do physics. Works most of the time.
+            <h3>Physics defined collisions</h3> Supports axis aligned bounding box based collisions as well as circle based collision.
+            <h3>Particle System</h3> Simple to implement using body objects. Implemented in asteroids
+            <h3>Inputs</h3> Mouse and Keyboard input. Allows for different ‘controllers’ for each game object
+            <h3>Sprite Rendering</h3> Supports 2D sprite rendering with animations of one or more sprites
+            <h3>Integrated Networking library w/ Peer.js</h3> Peer to Peer networking has never been easier! Just requires client
+            to have an id to connect to peer.
+            <h3>Game State Management</h3> Control the game state between menus and the running game.
+            <h3>Menu Management</h3> Has customisable menus for your game, with buttons which can be customized, sized, and placed
+            with custom click functions.
+            <h3>Resource Loading</h3> Displays a loading screen while loading the game assets on loading.
+    
+    
+            <br><br><br>
+            <a class="anchor" id="getting_started"></a>
+            <h1>Getting Started: </h1>
+            We’re gonna make a small game. You’re gonna make a sprite and its gonna do something. First off you’re gonna need a canvas.
+            Give it the id “w16canvas”. Size it to whatever you want!
+    
+            <pre class="prettyprint">
+    &ltcanvas id="w16canvas" width="800" height="400"&gt 
+        Canvas not supported
+    &lt/canvas&gt
+            </pre>
+            
+            Then import the engine. It’s already got Matter.js and Peer.js baked in. We made it easy for you. You’re welcome!
+            <pre class="prettyprint">
+    &ltscript src="w16.min.js"&gt &lt /script&gt 
+            </pre>
+            
+            After you import the engine, then you add the script for your code! You could import your code first, and wait for
+            the engine to load fully. Its up to you.
+            <pre class="prettyprint">
+    &ltscript src="game.js"&gt &lt /script&gt 
+            </pre>
+            
+            Cool, now let's move on to the fun part, JavaScript!
+            <h3>HTML Sample:</h3>
+            <pre class="prettyprint">
+    &ltcanvas id="w16canvas" width="800" height="400"&gt 
+        Canvas not supported
+    &lt/canvas&gt 
+    &ltscript src="w16.min.js"&gt &lt/script&gt 
+    &ltscript src="game.js"&gt &lt/script&gt 
+            </pre>
+    
+            <h3>Game Sample:</h3>
+    
+            <pre class="prettyprint">
+    w16 = new W16()  
+    
+    //used with permission from the Artist: Merve Naz Yelmen 
+    w16.resources.addImage('card', 'http://i.imgur.com/IztPI0x.jpg');  
+    
+    class Card extends Body{ 
+        constructor(){ 
+            super() 
+        }  
+    
+        update(){ 
+            this.X = Math.random() * canvas.width 
+            this.Y = Math.random() * canvas.height  
+    
+            let overlaps = this.overlaps(); 
+            if (overlaps.length > 0){ 
+                for (var collision of overlaps){ 
+                    this.handleCollisions(collision) 
+                } 
             } 
         } 
-    } 
-}  
-
-class Game extends State{ 
-    constructor(){ 
-        super() 
     }  
-
-    startState(){ 
-        var card = new Card() 
-        card.X = 0 
-        card.Y = 0 
-        card.width = 200 
-        card.height = 200 
-        card.name = 'hombre' 
-        card.image = 'card'  
-
-        w16.addToWorld(card) 
-    } 
-}  
-
-game = new Game()
-w16.stateMan.addState('game', game)
-w16.run(30)
-        </pre>
-        
-        The engine object is created with the line
-        <pre class="prettyprint">
-w16 = new W16()
-        </pre>
+    
+    class Game extends State{ 
+        constructor(){ 
+            super() 
+        }  
+    
+        startState(){ 
+            var card = new Card() 
+            card.X = 0 
+            card.Y = 0 
+            card.width = 200 
+            card.height = 200 
+            card.name = 'hombre' 
+            card.image = 'card'  
+    
+            w16.addToWorld(card) 
+        } 
+    }  
+    
+    game = new Game()
+    w16.stateMan.addState('game', game)
+    w16.run(30)
+            </pre>
             
-        This engine is the driving force for the game. Any objects you wish you have in the game, must be added to the game engine object by
-        <pre class="prettyprint">
-w16.addToWorld(object)
-        </pre>
-        
-        In the above example, a card object is defined, and created given an X and Y position on the canvas, and a width
-        and height for the sprite. The image is declared as a resource and added to the engine. The card later used the associated
-        label to associate the card with the sprite. <br><br> To run the game, a Game state must be created and declared
-        to the engine. The class Game extends State, and the w16 state manager is notified there is a state called Game by
-        calling
-        <pre class="prettyprint">
-game = new Game()
-w16.stateMan.addState('game', game)
-        </pre>
-        
-        The game is run by calling
-        <pre class="prettyprint">
-w16.run(30)
-        </pre>
+            The engine object is created with the line
+            <pre class="prettyprint">
+    w16 = new W16()
+            </pre>
+                
+            This engine is the driving force for the game. Any objects you wish you have in the game, must be added to the game engine object by
+            <pre class="prettyprint">
+    w16.addToWorld(object)
+            </pre>
             
-        where 30 is the number of updates called per second.
+            In the above example, a card object is defined, and created given an X and Y position on the canvas, and a width
+            and height for the sprite. The image is declared as a resource and added to the engine. The card later used the associated
+            label to associate the card with the sprite. <br><br> To run the game, a Game state must be created and declared
+            to the engine. The class Game extends State, and the w16 state manager is notified there is a state called Game by
+            calling
+            <pre class="prettyprint">
+    game = new Game()
+    w16.stateMan.addState('game', game)
+            </pre>
+            
+            The game is run by calling
+            <pre class="prettyprint">
+    w16.run(30)
+            </pre>
+                
+            where 30 is the number of updates called per second.<br><br>
+            
+            The draw function can be overwritten for each individual object. In the above example, we can extend it by adding a timer and update the draw method when the timer expires.
+            <pre class="prettyprint">             
+                class Card extends Body{ 
+                    constructor(){ 
+                        super() 
+                        this.timerActive = true;
+                        this.ticksRemaining = 300;
+                    }  
+                
+                    update(){ 
+                        Body.prototype.update.call(this)
+                        this.X = Math.random() * canvas.width 
+                        this.Y = Math.random() * canvas.height  
+                
+                        let overlaps = this.overlaps(); 
+                        if (overlaps.length > 0){ 
+                            for (var collision of overlaps){ 
+                                this.handleCollisions(collision) 
+                            } 
+                        } 
+                    }
+                    
+                    draw(context){
+                        Body.prototype.draw.call(this)
+                        if (this.ticksRemaining <1) {
+                            context.font = "40px Helvetica"
+                            context.fillText("Time's up!", this.X, this.Y);
+                        }
+                    }
+                }  
+            </pre>
+            This new card class includes a timer which runs for 10 seconds, or 300 in-game updates. The Body class handles the timer updates, so we include the update calls on the body. Similarly, the body 
+            class has drawing functions, so we include that in the override function for drawing. This allows the body to draw the object as normal, and allows us to add new functionality in this function.
+            This function draws a message which says "Time's up" when the ticksRemaining is less than 1. This renders wherever the card object was when the draw call occurs.
+            <br><br>
+            Input is important to any game, and the various sample games have various methods for input. To add input, we simply add a controller, and bind the options we want to have happen when the input is pressed.
+            <pre class="prettyprint">
+                class Card extends Body{ 
+                    constructor(){ 
+                        super() 
+                    }  
+                
+                    update(){ 
+                        Body.prototype.update.call(this)
+                        this.controls()
+                        wrap(this)
+                    } 
 
+                    controls() {
+                        let x = 0, y = 0
+                        let thrust = 0.0025
+                        if (w16.controller.up) {
+                            let y = -Math.cos(this.angle)
+                            let x = Math.sin(this.angle)
+                            this.physics_body.force = { 'x': thrust * x, 'y': thrust * y }
+                        }
+                             
+                        if (w16.controller.left) {
+                            w16.physics.Body.rotate(this.physics_body, -0.1)
+                            //this.physics_body.angle += -.01
+                        }
+                
+                        if (w16.controller.right) {
+                            //this.physics_body.angle += .01
+                            w16.physics.Body.rotate(this.physics_body, 0.1)
+                        }
+                    }
+                }  
+                
+                class Game extends State{ 
+                    constructor(){ 
+                        super() 
+                    }  
+                
+                    startState(){ 
+                        var card = new Card() 
+                        card.X = 0 
+                        card.Y = 0 
+                        card.width = 200 
+                        card.height = 200 
+                        card.name = 'hombre' 
+                        card.image = 'card'  
+                        card.center = { 'x': card.width / 2, 'y': card.height / 2 }
+                        card.physics_body = w16.physics.Bodies.rectangle(card.X, card.Y, card.width, card.height)
+                        card.controller = new Controller()
+
+                        card.controller.addKey('87', 'w', 'up') // w key
+                        card.controller.addKey('38', 'up', 'up') // up arrow
+            
+                        card.controller.addKey('65', 'a', 'left') // a key
+                        card.controller.addKey('37', 'left', 'left') // left arrow
+            
+                        card.controller.addKey('83', 's', 'down') // s key
+                        card.controller.addKey('40', 'down', 'down') // down arrow
+            
+                        card.controller.addKey('68', 'd', 'right') // d key
+                        card.controller.addKey('39', 'right', 'right') // right arrow
+                
+                        w16.addToWorld(card) 
+                    } 
+                }  
+            </pre>
+            This snippet includes movement similar to the asteroids sample game. This requires making the card a physics body, subject to the physics calculations of the engine.
+            To introduce the input, we add a controller to the card object. A controller is an object which interfaces with the keyboard abstractly, allowing the controller to map booleans to specific characters.
+            <pre class="prettyprint">
+                card.controller.addKey('87', 'w', 'up') // w key
+                card.controller.addKey('38', 'up', 'up') // up arrow
+            </pre>
+            binds both the 'w' key and the 'up' key to the controller.up boolean. The first two arguments are the key number, and the actual key pressed. The third argument is what the controller boolean should be for that keypress.
+            Using this controller object, we may bind multiple keys to the same game function, and rely on the controller instead of raw keyboard input.
+            <br><br><br>
+            Thanks for reading and your interest in the w16 engine! If you'd like to take a look at the sample games, or see how to implement more advanced features, 
+            please take a look at the github repository and try out the sample games. 
+
+
+            <br><br><br>
+            <a class="anchor" id="sample_games"></a>
+            <h1>Sample Games:</h1>
+            <a href="games/alchemy/alchemy.html">Alchemy!</a>
+            <br>
+            <a href="games/snake/snake.html">Snake!</a>
+            <br>
+            <a href="games/asteroids/asteroids.html">Asteroids!</a>
+            <br>
+            <a href="games/cops and robbers/copsandrobbers.html">Cops and Robbers!</a>
+    
+            
+        </div>
+        <!-- end of main container -->
         <br><br><br>
-        <a class="anchor" id="sample_games"></a>
-        <h1>Sample Games:</h1>
-        <a href="games/alchemy/alchemy.html">Alchemy!</a>
-        <br>
-        <a href="games/snake/snake.html">Snake!</a>
-        <br>
-        <a href="games/asteroids/asteroids.html">Asteroids!</a>
-        <br>
-        <a href="games/cops and robbers/copsandrobbers.html">Cops and Robbers!</a>
-
-    </div>
-    <!-- end of main container -->
-
-</body>
-
-</html>
+    </body>
+    
+    </html>
