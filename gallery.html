@@ -25,81 +25,79 @@
             <h1>Getting Started: </h1>
             We’re gonna make a small game. You’re gonna make a sprite and its gonna do something. 
             
-            First off you’re gonna need a canvas. Give it the id “w16canvas”. Size it to whatever you want!<br><br>
-            &lt canvas id="w16canvas" width="800" height="400"&gt <br>
-               Canvas not supported<br>
-            &lt /canvas&gt <br><br>
+            First off you’re gonna need a canvas. Give it the id “w16canvas”. Size it to whatever you want!
+            <pre class="prettyprint">
+            &lt canvas id="w16canvas" width="800" height="400"&gt 
+               Canvas not supported
+            &lt /canvas&gt </pre>
             Then import the engine. It’s already got Matter.js and Peer.js baked in. We made it easy for you. You’re welcome!
-            <br><br>
+            <pre class="prettyprint">
             &lt script src="w16.min.js"&gt &lt /script&gt 
-            <br><br>
+            </pre>
             After you import the engine, then you add the script for your code! You could import your code first, and wait for the engine to load fully. Its up to you.
-            <br><br>
+            <pre class="prettyprint">
             &lt script src="game.js"&gt &lt /script&gt 
-            <br><br>
+            </pre>
             
             Cool, now let's move on to the fun part, JavaScript!
             
             
             <h2>HTML Sample:</h2>
-            &lt canvas id="w16canvas" width="800" height="400"&gt 
-            <br>
+            <pre class="prettyprint">
+            &ltcanvas id="w16canvas" width="800" height="400"&gt 
                Canvas not supported
-            <br>
-            &lt /canvas&gt 
-            <br>
-            &lt script src="w16.min.js"&gt &lt /script&gt 
-            <br>
-            &lt script src="game.js"&gt &lt /script&gt 
-            <br>
-            
+            &lt/canvas&gt 
+            &ltscript src="w16.min.js"&gt &lt/script&gt 
+            &ltscript src="game.js"&gt &lt/script&gt 
+            </pre>
             <h2>Game Sample:</h2>
             
+            <pre class="prettyprint">
+            w16 = new W16()  
             
-            w16 = new W16()<br><br>
+            //used with permission from the Artist: Merve Naz Yelmen 
+            w16.resources.addImage('card', 'http://i.imgur.com/IztPI0x.jpg');  
             
-            //used with permission from the Artist: Merve Naz Yelmen<br>
-            w16.resources.addImage('card', 'http://i.imgur.com/IztPI0x.jpg');<br><br>
+            class Card extends Body{ 
+               constructor(){ 
+                   super() 
+               }  
             
-            class Card extends Body{<br>
-               constructor(){<br>
-                   super()<br>
-               }<br><br>
+               update(){ 
+                   this.X = Math.random() * canvas.width 
+                   this.Y = Math.random() * canvas.height  
             
-               update(){<br>
-                   this.X = Math.random() * canvas.width<br>
-                   this.Y = Math.random() * canvas.height<br><br>
+                   let overlaps = this.overlaps(); 
+                   if (overlaps.length > 0){ 
+                       for (var collision of overlaps){ 
+                           this.handleCollisions(collision) 
+                       } 
+                   } 
+               } 
+            }  
             
-                   let overlaps = this.overlaps();<br>
-                   if (overlaps.length > 0){<br>
-                       for (var collision of overlaps){<br>
-                           this.handleCollisions(collision)<br>
-                       }<br>
-                   }<br>
-               }<br>
-            }<br><br>
+            class Game extends State{ 
+               constructor(){ 
+                   super() 
+               }  
             
-            class Game extends State{<br>
-               constructor(){<br>
-                   super()<br>
-               }<br><br>
+               startState(){ 
+                   var card = new Card() 
+                   card.X = 0 
+                   card.Y = 0 
+                   card.width = 200 
+                   card.height = 200 
+                   card.name = 'hombre' 
+                   card.image = 'card'  
             
-               startState(){<br>
-                   var card = new Card()<br>
-                   card.X = 0<br>
-                   card.Y = 0<br>
-                   card.width = 200<br>
-                   card.height = 200<br>
-                   card.name = 'hombre'<br>
-                   card.image = 'card'<br><br>
-            
-                   w16.addToWorld(card)<br>
-               }<br>
-            }<br><br>
-            
-            game = new Game()<br>
-            w16.stateMan.addState('game', game)<br>
-            w16.run(30)<br><br>
+                   w16.addToWorld(card) 
+               } 
+            }  
+        
+            game = new Game()
+            w16.stateMan.addState('game', game)
+            w16.run(30)
+            </pre>  
 
             The engine object is created with the line <br><br>
             w16 = new W16()<br><br>
@@ -124,4 +122,5 @@
         <br>
         <a href="games/cops and robbers/copsandrobbers.html">Cops and Robbers!</a>
     </body>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 </html>
